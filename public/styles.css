@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Abel&family=Indie+Flower&display=swap');
+
+
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +10,7 @@
 
  /* HEADER AND NAVIGATION BAR  */
 header {
-  border: 7px solid rgb(255,240,245);
+  border: 10px solid rgb(255,240,245);
   height: 50vh;
   width: auto;
   position: relative;
@@ -14,7 +18,7 @@ header {
 }
 
 #imagen {
-   background-image: url('nav-menu-pic.jpg');
+   background-image: url('pizza.jpg');
   background-position: center;
    background-repeat: no-repeat;
    background-size: cover;
@@ -37,7 +41,7 @@ header {
   border-radius: 10px;
   margin-right: 45px;
   margin-top: 10px;
-  background-color: rgba(211,211,211, 0.1);
+  background-color: rgba(0,0,0, 0.1);
   font-size: 22px;
 }
 
@@ -65,7 +69,7 @@ header {
 
 
 section {
-  border: 7px solid rgb(255,240,245);
+  border: 10px solid rgb(255,240,245);
   height:auto;
   width: 100%;
   background-color: rgb(255,192,203);
@@ -75,7 +79,7 @@ section {
 
 #form-section {
     background-color: rgb(255, 220, 250);
-    height: 200px;
+    height: auto;
     width: 100%
     border: 4px solid rgb(255,240,245);
     box-sizing: border-box;
@@ -112,10 +116,12 @@ section {
 
 #send-info > label{
   background-color: rgb(250, 250, 220);
+  width: auto;
+  min-height: 100px;
   display: block;
   box-sizing: border-box;
   border-width: 1px 4px 3px 0.2px;
-    border-style: solid;
+  border-style: solid;
 
 }
 
@@ -131,56 +137,62 @@ section {
   padding: 5px;
   min-height: 600px;
   width: auto;
-  background-color: blue;
+  background-color: rgba(248, 248, 232, 0,2);
+}
+
+/* styles for the food content box */
+
+.foodContentboxTittle {
+  font-family: 'Abel', sans-serif;
+  font-family: 'Indie Flower', cursive;
+  margin-bottom: 1.5%;
 }
 
 
 .foodContent {
-    height: 400px;
-    width: 100%;
-    background-color: rgb(255,250,245);
+  min-height: 300px;
+  width: auto;
+  background-color: rgb(255,250,245);
+  margin: auto auto 1% auto;
+  padding: 1%;
+  overflow: auto;
+  margin-bottom: 3%;
+  font-family: 'Abel', sans-serif;
+  font-family: 'Indie Flower', cursive;
 }
-
 
 
 .adittionalContent {
   border: 1px solid black;
-  width: 100%;
+  width: auto;
   height: auto;
   box-sizing: border-box;
   background-color: rgba(240,250,240, 1);
+  margin: auto;
+  padding: 2%;
+  font-family: 'Abel', sans-serif;
+  font-family: 'Indie Flower', cursive;
 }
 
 
-
+/* styles for the food  box title */
 .title {
-  height: 30px;
   font-size: 23px;
-  width: 100%;
+  width: auto;
+  height: auto;
   margin-bottom: 15px;
   background-color: rgba(240,250,240, 1);
   text-align: center;
-
 }
 
- /* .article-box > p:first-child {
-  font-size: 18px;
-  font-family: 'Pangolin', cursive;
-  padding: 5px;
-  box-sizing: border-box;
-  line-height: 3rem;
-  border-radius: 2%;
-} */
 
 img  {
-height: 300px;
-width: 400px;
+height: 250px;
+width: auto;
 float: right;
-margin: 20px 100px 5px 20px;
-border-radius: 2px;
+margin: 2%;
+border-radius: 20px;
 }
-
-
 
 
 /* FOOTER SECTION */

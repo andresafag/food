@@ -22,7 +22,7 @@ html(lang="en")
             ul(class="sub-menu")
               li.
                 #[a(href="#") item 2]
-              li. 
+              li.
                 #[a(href="#") item 2]
     section
       div(id="form-section")
@@ -34,53 +34,62 @@ html(lang="en")
               input(type="submit", id="submit", value="Yummy!")
               i.fa-solid.fa-utensils
       article 
-        div(id="main-content")
+        div(id="contentForFood")
     footer
       div(class="footer-section")
 script.
-  var theIdArray = [],
-      imagesArray = []                                                                                                                                        
-      let footerSection = document.querySelector('.footer-section'),
-      foodInfo = document.querySelector('#food'),
-      mainContent=document.querySelector('#main-content'),
-      inputSubmit = document.querySelector('#submit'),
+  let theIdArray = [], //Array of the food ids
+      imagesArray = [], //Array of the images sources                
+      footerSection = document.querySelector('.footer-section'),
+      foodInput = document.querySelector('#food'),// Get the user input 
+      contentForFood=document.querySelector('#contentForFood'), // This is where all the food information will be displayed
+      searchFood = document.querySelector('#submit'),
       adittionalInfo=document.querySelector('.adittionalInfo'),
-      idAndImages = 'https://api.spoonacular.com/recipes/complexSearch?query=pasta&apiKey=1dbbddeac15b47218269c8f28473b7bd',
+      idAndImages = `https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=4c17e459cfec4721a0f4ac09605d1daf`,
       summary = 'https://api.spoonacular.com/recipes/654926/information?apiKey=4c17e459cfec4721a0f4ac09605d1daf'
-      inputSubmit.addEventListener('click', function(e){
+
+
+      /* on click the request starts searching food  */
+      searchFood.addEventListener('click', function(e){
         e.preventDefault()
-        if(foodInfo.value.length == 0){
-          alert("Sorry You vaven't entered anything")
+        if(foodInput.value.length == 0){
+          alert("Sorry You haven't entered anything")
+          console.log("El valor del input es: ", foodInput.value, " y la extension es: ", foodInput.value.length)
+          contentForFood.textContent = ''
+          return
         }
-        else if (foodInfo.value.length > 0){
-          mainContent.textContent = ''
+        else if (foodInput.value.length > 0){
+          contentForFood.textContent = ''
           theIdArray=[]
           imagesArray=[]
-          fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${foodInfo.value}&apiKey=4c17e459cfec4721a0f4ac09605d1daf`)
+           /* Here we start the search */
+          fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=4c17e459cfec4721a0f4ac09605d1daf`)
           .then(response => {
             return response.json()
             })
           .then(response =>{
-            /* Here we get the id of all the results and put them on an array */
+            console.log("Esto es lo que devuelve la respuesta del foodInfo: ", response.results , " y la extension de la respuesta del foodInfo: ", response.results.length);
             if(response.results.length == 0){
               alert("That food is not in the database")
+              /* If response is not successful stops the search */
               return
             }
             response.results.forEach(food=>{
+               /* Here we get the ids of all the results and put them on an array */
               theIdArray.push(food.id)
               })
-              /* Loop for to add the id on every request */
-            for(var i = 0; i < theIdArray.length; i++){
+              /* Loop through id on every request */
+            for(var i = 0; i < 4; i++){
               fetch(`https://api.spoonacular.com/recipes/${theIdArray[i]}/information?apiKey=4c17e459cfec4721a0f4ac09605d1daf`)
               .then(respo => {
                 return respo.json()
                 })
               .then(respon => {
                        /* We create a div container for each food description along with its image */
-                       let primeraCaja=document.createElement('div')
-                       let segundaCaja=document.createElement('div')
-                       mainContent.append(primeraCaja)
-                       mainContent.append(segundaCaja)
+                       let foodContentBox=document.createElement('div')
+                       let adittionalContentBox=document.createElement('div')
+                       contentForFood.append(foodContentBox)
+                       contentForFood.append(adittionalContentBox)
                        
                        /* each food div is created */
                        let div_food_box = document.createElement('div')
@@ -94,35 +103,38 @@ script.
                        /* adding styles to the div for food and for the title too */
                        food_title_box.classList.add('title')
                        div_food_box.classList.add('foodContent')
-                       
-                       /* appending title text to the div doe title  */
+                       /* appending title text to the div title  */
                        food_title_box.append(food_title)
-                       primeraCaja.append(food_title_box)
-                       primeraCaja.append(div_food_box)
+                       foodContentBox.append(food_title_box)
+                       contentForFood.append(div_food_box)
                        
                        
                        /* adding the image */
                        div_food_box.innerHTML = `<img src=${respon.image}>`
                        div_food_box.append(respon.instructions)
                       
-                      primeraCaja.classList.add('foodContent')
-                      segundaCaja.classList.add('adittionalContent')
+                      foodContentBox.classList.add('foodContentboxTittle')
+                      
+                      
+                      adittionalContentBox.classList.add('adittionalContent')
                        
                        let headerIngredient=document.createElement('h4') 
                        headerIngredient.textContent="Ingredientes: "
                        
-                       segundaCaja.append(headerIngredient)
+                       console.log(respon.instructions)
+                       adittionalContentBox.append(headerIngredient)
                       for(var ingredient = 0;ingredient < respon.extendedIngredients.length; ingredient++){
                         let ingredientItem=document.createElement('p') 
                         ingredientItem.textContent=[ingredient+1] + ": " + respon.extendedIngredients[ingredient].name  
-                        segundaCaja.append(ingredientItem)   
+                        adittionalContentBox.append(ingredientItem)   
                        }  
                       
                        
                        let foodTime=document.createElement('span')  
                        foodTime.style.fontWeight='700'
-                       foodTime.textContent= "Ready in: " + respon.readyInMinutes  
-                       segundaCaja.append(foodTime)  
+                       foodTime.style.margin = 'auto' 
+                       foodTime.textContent= "Ready in: " + respon.readyInMinutes + " minutes"  
+                       adittionalContentBox.append(foodTime)  
                 })
             }
             })
@@ -164,60 +176,4 @@ script.
     
     
     
-        inputSubmit.addEventListener('click', function(e){
-          e.preventDefault()
-          /* txtlayout.style.display='none' */
-          fetch(`https://api.spoonacular.com/recipes/654926/information?apiKey=4c17e459cfec4721a0f4ac09605d1daf`)
-          .then(respo => {
-            return respo.json()
-            })
-          .then(respon => {
-             /* We create a div container for each food description along with its image */
-             let primeraCaja=document.createElement('div')
-             let segundaCaja=document.createElement('div')
-             mainContent.append(primeraCaja)
-             mainContent.append(segundaCaja)
-             
-             /* each food div is created */
-             let div_food_box = document.createElement('div')
-             
-             /* each div for food title is created */
-             let food_title_box = document.createElement('div')
-             
-             /* extracting the food title */
-             let food_title = document.createElement('h4').textContent = respon.title
-            
-             /* adding styles to the div for food and for the title too */
-             food_title_box.classList.add('title')
-             div_food_box.classList.add('foodContent')
-             
-             /* appending title text to the div doe title  */
-             food_title_box.append(food_title)
-             primeraCaja.append(food_title_box)
-             primeraCaja.append(div_food_box)
-             
-             
-             /* adding the image */
-             div_food_box.innerHTML = `<img src=${respon.image}>`
-             div_food_box.append(respon.instructions)
-            
-            primeraCaja.classList.add('foodContent')
-            segundaCaja.classList.add('adittionalContent')
-             
-             let headerIngredient=document.createElement('h4') 
-             headerIngredient.textContent="Ingredientes: "
-             segundaCaja.append(headerIngredient)
-            for(var ingredient = 0;ingredient < respon.extendedIngredients.length; ingredient++){
-              let ingredientItem=document.createElement('p') 
-              ingredientItem.textContent=[ingredient+1] + ": " + respon.extendedIngredients[ingredient].name  
-              segundaCaja.append(ingredientItem)   
-             }  
-            
-             
-             let foodTime=document.createElement('span')  
-             foodTime.style.fontWeight='700'
-             foodTime.textContent= "Ready in: " + respon.readyInMinutes  
-             segundaCaja.append(foodTime)  
-           }) 
-           
-        })
+  

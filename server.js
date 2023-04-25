@@ -11,11 +11,7 @@ router
   .get('/', function(req, res){
     res.render("index")
   })
-  .post('/name', (req, res)=>{
-    console.log(req.body.nombre)
-    res.send("hi")
-
-  })
+ 
 
 
 app.use(router)

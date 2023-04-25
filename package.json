@@ -1,0 +1,17 @@
+{
+  "name": "spoonacular",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.17.3",
+    "nodemon": "^2.0.16",
+    "pug": "^3.0.2"
+  }
+}
