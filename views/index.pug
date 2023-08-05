@@ -12,24 +12,16 @@ html(lang="en")
       nav
         div(id="imagen")
         ul(id="main-ul")
-          li Items 1 
-            ul(class="sub-menu")
-              li.
-                #[a(href="#") item 1]
-              li.
-                #[a(href="#") item 1]
-          li Items 2
-            ul(class="sub-menu")
-              li.
-                #[a(href="#") item 2]
-              li.
-                #[a(href="#") item 2]
+          li.
+            #[a(href="#") Food fun facts]
+          li.
+            #[a(href="#") Cooking techniques]
     section
       div(id="form-section")
         div
           form
             div(id="send-info")
-              label(for="food") Enter your your favourite food or cuisine
+              label(for="food") Enter your your favourite food or dish
               input(type="text", id="food", name="food") 
               input(type="submit", id="submit", value="Yummy!")
               i.fa-solid.fa-utensils
@@ -45,15 +37,15 @@ script.
       contentForFood=document.querySelector('#contentForFood'), // This is where all the food information will be displayed
       searchFood = document.querySelector('#submit'),
       adittionalInfo=document.querySelector('.adittionalInfo'),
-      idAndImages = `https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=4c17e459cfec4721a0f4ac09605d1daf`,
-      summary = 'https://api.spoonacular.com/recipes/654926/information?apiKey=4c17e459cfec4721a0f4ac09605d1daf'
+      idAndImages = `https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=1dbbddeac15b47218269c8f28473b7bd`,
+      summary = 'https://api.spoonacular.com/recipes/654926/information?apiKey=1dbbddeac15b47218269c8f28473b7bd'
 
 
       /* on click the request starts searching food  */
       searchFood.addEventListener('click', function(e){
         e.preventDefault()
         if(foodInput.value.length == 0){
-          alert("Sorry You haven't entered anything")
+          alert("Sorry you haven't entered anything")
           console.log("El valor del input es: ", foodInput.value, " y la extension es: ", foodInput.value.length)
           contentForFood.textContent = ''
           return
@@ -63,7 +55,7 @@ script.
           theIdArray=[]
           imagesArray=[]
            /* Here we start the search */
-          fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=4c17e459cfec4721a0f4ac09605d1daf`)
+          fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=1dbbddeac15b47218269c8f28473b7bd`)
           .then(response => {
             return response.json()
             })
@@ -79,8 +71,8 @@ script.
               theIdArray.push(food.id)
               })
               /* Loop through id on every request */
-            for(var i = 0; i < 4; i++){
-              fetch(`https://api.spoonacular.com/recipes/${theIdArray[i]}/information?apiKey=4c17e459cfec4721a0f4ac09605d1daf`)
+            for(var i = 0; i < theIdArray.length; i++){
+              fetch(`https://api.spoonacular.com/recipes/${theIdArray[i]}/information?apiKey=1dbbddeac15b47218269c8f28473b7bd`)
               .then(respo => {
                 return respo.json()
                 })
@@ -119,7 +111,7 @@ script.
                       adittionalContentBox.classList.add('adittionalContent')
                        
                        let headerIngredient=document.createElement('h4') 
-                       headerIngredient.textContent="Ingredientes: "
+                       headerIngredient.textContent="Ingredients: "
                        
                        console.log(respon.instructions)
                        adittionalContentBox.append(headerIngredient)

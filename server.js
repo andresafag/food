@@ -1,9 +1,10 @@
-let express = require('express');
-let app = express();
-let bodyParser = require('body-parser');
+let express = require('express'),
+    app = express(),
+    bodyParser = require('body-parser'),
+    router = express.Router()
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.port || 8000);
-let router = express.Router();
 app.use(express.static('public'));
 app.set('view engine', 'pug')
 
@@ -16,5 +17,5 @@ router
 
 app.use(router)
 app.listen(app.get('port'), function(){
-    console.log("Conectado al puerto: ", app.get('port'))
+    console.log("Connecting to port: ", app.get('port'))
   });
