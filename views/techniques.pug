@@ -1,0 +1,24 @@
+doctype html
+html(lang="en")
+  head
+    title= "Food"
+    link(rel="stylesheet", href="./styles.css", type="text/css")
+    link(rel='preconnect' href='https://fonts.googleapis.com')
+    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+    link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
+    link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
+    link(href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet")
+    link(href="https://fonts.googleapis.com/css2?family=Lobster&family=Pacifico&display=swap" rel="stylesheet")
+    link(href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Lobster&family=Pacifico&display=swap" rel="stylesheet")
+    script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
+  body  
+    header
+      include components/nav.pug
+    section
+      article 
+        div(id="techniques")
+          each val in techniques
+            div(class="technique")
+              h3= val.name
+              p= val.description
+    include components/footer

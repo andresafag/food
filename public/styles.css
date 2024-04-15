@@ -235,7 +235,24 @@ border-radius: 20px;
   border-radius: 50%;
 }
 
+/* TECHNIQUES */
 
+.technique { 
+  margin: 2% auto;
+  width: 95%;
+  border: 2px solid  rgba(134, 151, 173, 0.534); 
+  padding: 2%;
+}
+
+.technique h3 { 
+  font-size: 27px;
+  text-align: center;
+}
+
+.technique p { 
+  font-family: "Lobster", sans-serif;
+  text-align: center;
+}
 
 /* FOOTER SECTION */
 .footer-section {

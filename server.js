@@ -21,9 +21,11 @@ router
     res.render("facts")
   })
   .get('/techniques', async function(req, res){
-    let techniques = await cookingTechniques.find().limit(10)
-    console.log(techniques)
-    res.render("techniques")
+    let count = await cookingTechniques.countDocuments()
+    let random = Math.floor(Math.random() * count)
+    let techniques = await cookingTechniques.find().skip(random).limit(10)
+    console.log(techniques) 
+    res.render("techniques", {techniques:techniques})
   })
 
 app.use(router)

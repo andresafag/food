@@ -1,0 +1,291 @@
+doctype html
+html(lang="en")
+  head
+    title= "Food"
+    link(rel="stylesheet", href="./styles.css", type="text/css")
+    link(rel='preconnect' href='https://fonts.googleapis.com')
+    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+    link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
+    link(href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet")
+    link(href="https://fonts.googleapis.com/css2?family=Lobster&family=Pacifico&display=swap" rel="stylesheet")
+    link(href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Lobster&family=Pacifico&display=swap" rel="stylesheet")
+    script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
+  body  
+    nav
+      include components/nav.pug
+    section(id="facts_section")
+      div(id="facts_div_title")
+          br
+          h3 Thought you knew the food you were eating? So did we!
+          br
+          br  
+          p From surprising amounts of nutrients to the origins of some of our favourite dishes, here are some interesting food facts that will boggle your mind.
+      article(id="facts_article") 
+          div(class="facts") 
+              br  
+              h2 Dark chocolate can be more than just a sweet treat
+              img(src="darkchocolate.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p The dark chocolate we know and love is made from the roasted beans of the cacao tree and has a ton of interesting facts — many being health benefits.According to Harvard, dark chocolate can help lower blood pressure and reduce inflammation. A study of an isolated tribe with high intakes of cocoa had lower rates of heart disease, cancer and diabetes compared to the same tribesmen who had migrated to cities.
+              br
+              br 
+              p Dark chocolate that's 70% cocoa or more actually contains more caffeine per ounce than coffee. Just don't expect to stay up all night with the powdered hot chocolate you'd get at a supermarket. This stuff tends to be quite low in caffeine.
+          div(class="facts")
+              br
+              h2 Literally eat a fruit that's as sweet as nectar 
+              img(src="sweetfruits.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p Did you know that the word ‘nectarine' means 'sweet like nectar' and this is most likely the origin of the name? It's believed nectarines, like peaches, originated in China over 4,000 years ago. Nutritionally, nectarines are a high source of Vitamin C and A and are abundant in antioxidants. They aid in weight loss, help regulate blood pressure levels and overall good health. They also help improve immunity and heart health.
+          div(class="facts")
+              br
+              h2 Raspberries are a member of the rose family
+              img(src="Raspberries_(Rubus_idaeus).jpg", alt="", class="foodfactsimage")
+              br
+              br
+              p As are cherries, apricots, plums, pears, apples, quinces, peaches, strawberries, and blackberries. Unlike roses though, these types of fruits typically have flowers with five equal petals arranged around a central core. And, just like roses, raspberries (and blackberries) have plenty of thorns too - ouch!
+          div(class="facts")
+              br
+              h2 Chickpeas and almonds contains almost as much protein as steak
+              img(src="hummus.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p In a recent chat with EatFirst about plant-based diets, Greg McFarlane, a director at Vegan Australia, mention that it's a common myth that you're not able to become strong on a vegan diet and this is a great example of busting that myth.
+                br
+                br
+              p According to Better Health, "If you follow a vegetarian or vegan diet, as long as you eat a wide variety of foods, you can usually get the protein you need."
+                br
+                br
+              p While eating 100g of steak could contain up to 25g of protein, the same amount of chick peas contains 21g and almonds a whopping 28g!
+                br
+                br
+              p And if that's an excuse to eat even more hummus, we'll take it!
+          div(class="facts")
+              br
+              h2 The world's most hated vegetable is one of the best for you
+              img(src="brussels.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p Brussels sprouts may be the most hated vegetable, but it's among the most nutritious veggies out there.It's packed full of vitamins and minerals, has virtually no calories, no fat, no cholesterol, and it fills you up. Better yet, it also has an anti-oxidant that has shown to be anti-inflammatory and could fight cancer.
+          div(class="facts")
+              br  
+              h2 Pistachios are actually duping us
+              img(src="pistachios.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p These little crunchy, green snacks have been fooling us for years. Pistachios aren't nuts at all, but rather a "drupe" - a family that also includes cherries, peaches and olives.
+                br
+                br              
+              p So, technically, it's a fruit! Well, actually the seeds of a fruit (the outer fruit is removed during processing). Like other ‘nuts', pistachios are a rich source of protein, fibre, vitamins and minerals, which can help people with weight management, protect against diabetes and hypertension and improve digestion. The omega-3 fatty acids present in pistachios can help lower your blood pressure and may also reduce your risk of heart disease.
+          div(class="facts")
+              br
+              h2 Caesar salad isn't from anywhere near Italy
+              br
+              br
+              img(src="caesarsalad.jpeg", alt="", class="foodfactsimage")
+              p Bet you didn't know this. We sure didn't!
+              br
+              br  
+              p The Caesar salad was actually invented in Tijuana, Mexico back in 1927. Hotel Caesar owner Caesar Cardini wanted to make dinner for friends, but didn't have much at hand. Lettuce was tossed into a bowl with a dressing made from whatever he had on hand and salad history was made.
+              br 
+              br 
+              p There's even an annual festival in Tijuana every June in honour of the infamous side dish.
+              br
+              br  
+              p (To be fair, Cardini himself was actually born in Italy)
+          div(class="facts")
+              br
+              h2 Avocados are fruit
+              img(src="avocado.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p Avocados are a perennial fruit, and according to Australian Avocado the first ones to arrive in Australia were planted in Sydney's Royal Botanic Gardens back in 1840.
+              br 
+              br 
+              p They also must be picked when matured in order to ripen, which can take between 1-2 weeks.
+              br
+              br  
+              p In Spain and Mexico, avocados are called “alligator pears” due to their shape and bumpy, green skin, while in India and China, they are referred to as “butter pears”.
+              br
+              br      
+              p This healthy food is good for you too! They're a great source of vitamin C, E, K, and B-6.
+          div(class="facts")
+              br
+              h2 Spam is actually just short for 'spiced ham'
+              img(src="spam.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p We're not talking about the unsolicited emails you get, but that mysterious meat in a can. Ever wondered what it means? It's short for ‘Spiced Ham'. Not so mysterious huh?
+              br
+              br  
+              p Also not so 'spiced' either. A can of spam includes just six ingredients: pork, salt, water, potato starch, sugar and sodium nitrate (a preservative often used for cured meats).
+          div(class="facts")
+              br
+              h2 Oreos are vegan
+              img(src="oreo.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p It seems "milk's favourite cookie" can actually be dipped in oat, soy or almond milk for a delicious vegan snack.
+              br
+              br  
+              p These iconic sandwich cookies don't actually contain any milk products or eggs so are vegan-friendly.
+              br
+              br  
+              p You can even get an official vegan Oreo tote bag to carry your favourite plant-based biscuits in.
+          div(class="facts")
+              br
+              h2 But some red food dyes and artificial vanilla extracts may not be
+              img(src="bugs.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p Some people find the idea of eating insects repulsive, but loads of us may have been doing it already without even realising it.
+              br
+              br  
+              p Much of the common red food dye we consume is made from crushed up bugs, notes this BBC article. PETA notes some of the foods this red food dye can be used in includes candies, ketchup, soft drinks and canned cherries.
+              br 
+              br 
+              p Surprisingly not an April Fools joke, beavers emit a goo (eww) to mark their territory and someone, somewhere discovered that it smelled and tasted like vanilla. According to National Geographic, "manufacturers have been using it extensively in perfumes and foods for at least 80 years."
+              br 
+              br 
+              p In this case, we guess when they say "natural flavouring" it isn't, technically, a lie.
+          div(class="facts")
+              br  
+              h2 Neither California rolls and Hawaiian pizza were actually invented in America
+              img(src="confused.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p  In fact, both foods originated in the USA's northern neighbour - Canada.
+              br
+              br  
+              p The popular sushi roll was crafted for the first time in Vancouver, British Columbia, by chef Hidekazu Tojo. Heard of the BC roll, rainbow roll, golden roll or spider roll? Those are his creations too!
+              br
+              br 
+              p As for the pizza, that was an experiment by Greek-Canadian Sam Panopoulos. According to Time Magazine, the name "Hawaiian" was given based on the brand of pineapple the chef was using at the time.
+              br
+              br            
+              p While the food divides many, it is undivided that it's a Canadian invention.       
+          div(class="facts")
+              br
+              h2 Peanut butter is good for you
+              img(src="peanutbutter.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p Studies have shown that eating peanut butter can help lower cholesterol, aid in weight loss, add protein to your diet and prevent type 2 diabetes. It's also low in carbs.
+              br
+              br  
+              p Of course, many peanut butters do include extra ingredients like sugar, salt, honey or chocolate to change the flavouring, so keep that in mind if you're buying peanut butter thinking it's a health food.
+              br
+              br             
+              p Bet you didn't know this either, but peanut butter glows in the dark after it's exposed to intense light!
+          div(class="facts")
+              br
+              h2 There's more water in cucumber than watermelon
+              img(src="cucumberwatermelon.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p Okay, not by much, but this was still a fun food fact to us!
+              br
+              br
+              p Watermelon is about 92% water, while cucumber is 95%. That's actually the same as lettuce and celery. It's also super low in calories, with just eight per serving.
+          div(class="facts")
+              br
+              h2 Bananas, pumpkins and lemons are berries... but raspberries aren't!
+              img(src="berries.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p As we mentioned before, raspberries (along with strawberries and blackberries) are actually apart of the rose family.
+              br
+              br             
+              p The way botanists categorise fruits means that "berries" are all developed from the ovary of a glower and have three layers - the skin, the flesh that we eat and the seeds. Sometimes you can eat the skin, sometimes you can't. Sometimes you can eat the seeds, sometimes you can't.
+              br
+              br  
+              p It's all very confusing, isn't it?
+          div(class="facts")
+              br
+              h2 Speaking of bananas, there's quite a few fun food facts about them.
+              img(src="bananas.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p Did you know bananas float in water? And its skin is said to help relieve the itching from mosquito bites?
+              br
+              br
+              p Eating bananas can slo help your nervous system, restore tired muscle tissues and "boost bored brains," according to Australian Bananas.
+              br
+              br
+              p They're also the world's oldest fruit dating back more than 10,000 years. 
+          div(class="facts")
+              br
+              h2 Some farm raised salmon is dyed pink 
+              img(src="salmon.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p Wild salmon is known for its bright pink flesh, which comes from their diet of algae and krill. Farm raised salmon on the other hand, often doesn't have the same diet.
+              br
+              br  
+              p Dye-free farm raised salmon is actually more of a white/grey colour rather than bright pink.
+              br
+              br
+              p Sort of.
+              br
+              br
+              p The 9Honey Kitchen reported astaxanthin, which makes salmon pink, is actually a good thing.
+              br
+              br
+              p "Given its health benefits in salmon feed, it is poor practice to make feeds for this species without astaxanthin, and it is not natural for salmon to be depleted of this nutrient," David Whyte, from Huon Salmon in Tasmania, told the news outlet. 
+          div(class="facts")
+              br
+              h2 Coriander may taste like soap to you because of your genes
+              img(src="coriander.jpeg", alt="", class="foodfactsimage")
+              br
+              br 
+              p And if it does to you, you're not crazy. According to News Medical, coriander "also has some aldehydes that are found in soaps, detergents, and lotions as well as the bug family of insects."
+              br
+              br
+              p "...most cilantro haters shared a particular group of olfactory receptor genes called OR6A2 that has the capacity to identify the smell of aldehyde chemicals that are present in coriander leaves as well as soaps." 
+          div(class="facts")
+              br
+              h2 Sandwiches are named after English royalty 
+              img(src="sandwich.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p This lunch time classic is said to have been invented by the Earl of Sandwich. The unconfirmed story does that the Earl, John Montagu was on a 24-hour gambling streak and did not want to leave his table.
+              br
+              br  
+              p He wanted to eat without having to put his cards down… thus the sandwich was born.
+              br
+              br
+              p One small step for man, one giant leap for…. sandwiches?
+              br
+              br
+              p Bonus fact: Another fun fact about sandwiches is that one has been smuggled into space!
+              br
+              br  
+              p Astronaut John Young smuggled a corned beef sandwich onto his spacecraft for a six-hour mission. The sandwich didn't go too well in zero gravity conditions and could have actually had grave consequences.
+              br
+              br  
+              p Floating crumbs or debris could have caused serious damage to the shuttle, but luckily they returned unharmed. NASA have since taken steps to ensure no sandwich goes into space again. 
+          div(class="facts")
+              br
+              h2 Pound cakes don't weight a pound 
+              img(src="poundcake.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p Roughly half a kilo sounds about right for the weight of one of these cakes, but the name doesn't have anything to do with the state of its final product.
+              br
+              br 
+              Back when the dessert was invented, its recipe called for a pound of butter, sugar, eggs and flour to be mixed together.  
+          div(class="facts")
+              br
+              h2 Figs may be plants, but they aren't quite all vegan 
+              img(src="figs.jpeg", alt="", class="foodfactsimage")
+              br
+              br
+              p As part of the pollination process, female wasps crawl inside of a fig to lay her eggs and, unfortunately, dies during the process.
+              br
+              br 
+              p By the time we eat the sweet fruits though, there are no traces of wasp left as its been digested by the fig.
+              br
+              br   
+              p If it makes you feel better, not only is there no trace of the flying creature left, there is also a chance your snack is insect-free.
+    include components/footer
