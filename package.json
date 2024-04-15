@@ -4,14 +4,23 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.4.5",
     "express": "^4.17.3",
-    "nodemon": "^2.0.16",
+    "mongoose": "^8.3.1",
     "pug": "^3.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andresafag/food.git"
+  },
+  "bugs": {
+    "url": "https://github.com/andresafag/food/issues"
+  },
+  "homepage": "https://github.com/andresafag/food#readme"
 }

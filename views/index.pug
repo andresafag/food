@@ -8,27 +8,20 @@ html(lang="en")
     link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
     script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
   body  
-    header
-      nav
-        div(id="imagen")
-        ul(id="main-ul")
-          li.
-            #[a(href="#") Food fun facts]
-          li.
-            #[a(href="#") Cooking techniques]
-    section
+    nav
+      include components/nav.pug
+    section(id="submit_section")
       div(id="form-section")
         div
           form
             div(id="send-info")
-              label(for="food") Enter your your favourite food or dish
-              input(type="text", id="food", name="food") 
-              input(type="submit", id="submit", value="Yummy!")
+              label(for="food") Enter your your favorite food or dish
+              input(type="text", id="food", name="food")
+              input(type="submit", id="submit", value="Yummy")
               i.fa-solid.fa-utensils
       article 
         div(id="contentForFood")
-    footer
-      div(class="footer-section")
+    include components/footer
 script.
   let theIdArray = [], //Array of the food ids
       imagesArray = [], //Array of the images sources                
@@ -37,8 +30,8 @@ script.
       contentForFood=document.querySelector('#contentForFood'), // This is where all the food information will be displayed
       searchFood = document.querySelector('#submit'),
       adittionalInfo=document.querySelector('.adittionalInfo'),
-      idAndImages = `https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=1dbbddeac15b47218269c8f28473b7bd`,
-      summary = 'https://api.spoonacular.com/recipes/654926/information?apiKey=1dbbddeac15b47218269c8f28473b7bd'
+      idAndImages = `https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=#{apiKey}`,
+      summary = 'https://api.spoonacular.com/recipes/654926/information?apiKey=#{apiKey}'
 
 
       /* on click the request starts searching food  */
@@ -55,7 +48,7 @@ script.
           theIdArray=[]
           imagesArray=[]
            /* Here we start the search */
-          fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=1dbbddeac15b47218269c8f28473b7bd`)
+          fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=#{apiKey}`)
           .then(response => {
             return response.json()
             })
@@ -72,7 +65,7 @@ script.
               })
               /* Loop through id on every request */
             for(var i = 0; i < theIdArray.length; i++){
-              fetch(`https://api.spoonacular.com/recipes/${theIdArray[i]}/information?apiKey=1dbbddeac15b47218269c8f28473b7bd`)
+              fetch(`https://api.spoonacular.com/recipes/${theIdArray[i]}/information?apiKey=#{apiKey}`)
               .then(respo => {
                 return respo.json()
                 })
@@ -102,25 +95,23 @@ script.
                        
                        
                        /* adding the image */
-                       div_food_box.innerHTML = `<img src=${respon.image}>`
-                       div_food_box.append(respon.instructions)
+                       let preparation = respon.instructions.replace(/<ol>|<li>|<\/li>|<\/ol>/g, '');
+                       div_food_box.innerHTML = `<img class="recipeimg" src=${respon.image}>`
+                       div_food_box.append(preparation)
                       
                       foodContentBox.classList.add('foodContentboxTittle')
-                      
                       
                       adittionalContentBox.classList.add('adittionalContent')
                        
                        let headerIngredient=document.createElement('h4') 
                        headerIngredient.textContent="Ingredients: "
                        
-                       console.log(respon.instructions)
                        adittionalContentBox.append(headerIngredient)
                       for(var ingredient = 0;ingredient < respon.extendedIngredients.length; ingredient++){
                         let ingredientItem=document.createElement('p') 
                         ingredientItem.textContent=[ingredient+1] + ": " + respon.extendedIngredients[ingredient].name  
                         adittionalContentBox.append(ingredientItem)   
                        }  
-                      
                        
                        let foodTime=document.createElement('span')  
                        foodTime.style.fontWeight='700'
@@ -132,40 +123,3 @@ script.
             })
         }
         })
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-  
