@@ -28,6 +28,10 @@ nav {
 
 /* menu */
 
+#menu {
+  width: 100px;
+  height: 100px;
+ }
 
 #main-ul {
   float: right;

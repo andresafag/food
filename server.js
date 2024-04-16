@@ -12,7 +12,6 @@ require('dotenv').config()
 
 const apiKey = process.env.API_KEY;
 
-
 router
   .get('/', function(req, res){
     res.render("index", {apiKey:apiKey})
@@ -23,8 +22,7 @@ router
   .get('/techniques', async function(req, res){
     let count = await cookingTechniques.countDocuments()
     let random = Math.floor(Math.random() * count)
-    let techniques = await cookingTechniques.find().skip(random).limit(10)
-    console.log(techniques) 
+    let techniques = await cookingTechniques.find().skip(random).limit(10).sort({description:-1})
     res.render("techniques", {techniques:techniques})
   })
 
