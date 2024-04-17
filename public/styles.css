@@ -106,7 +106,9 @@ nav {
   margin-top: 9px;
   font-size: 1.8rem;
   border: 2px solid rgb(240, 220, 230);
+  background-color: rgb(250, 250, 220);
 }
+
 
 #send-info > #submit:hover {
   border-style: solid;
@@ -116,7 +118,9 @@ nav {
 
 #send-info > label{
   background-color: rgb(250, 250, 220);
-  width: auto;
+  width: fit-content;
+  padding: 2%;
+  margin: auto;
   display: block;
   box-sizing: border-box;
   border-width: 1px 4px 3px 0.2px;
@@ -125,10 +129,12 @@ nav {
 
 #send-info > #food {
   width: 50%;
-  border: 1px solid rgb(255,250,245);
   box-sizing: border-box;
   font-size: 20px;
   margin: 10px 2px 2px 2px;
+  padding: 3%;
+  border-style: groove;
+  border-radius: 10px;
 }
 
 #main-content {
@@ -243,19 +249,22 @@ border-radius: 20px;
 
 .technique { 
   margin: 2% auto;
-  width: 95%;
+  width: 40%;
   border: 2px solid  rgba(134, 151, 173, 0.534); 
   padding: 2%;
 }
 
 .technique h3 { 
-  font-size: 27px;
+  font-size: 35px;
   text-align: center;
+  color: darkgreen;
 }
 
 .technique p { 
   font-family: "Lobster", sans-serif;
   text-align: center;
+  line-height: 2;
+  font-size: larger;
 }
 
 /* FOOTER SECTION */

@@ -19,6 +19,6 @@ html(lang="en")
         div(id="techniques")
           each val in techniques
             div(class="technique")
-              h3= val.name
+              h3= val.name.toUpperCase()
               p= val.description
     include components/footer
