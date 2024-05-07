@@ -1,7 +1,13 @@
 nav
   div(id="imagen")
     a(href="/") 
-      img(src="menu.png", alt="", id="menu")
+      img(src="images/menu.png", alt="", id="menu")
+  div(id="div-nav-items")  
+    #myLinks
+      a(href="facts") Food fun facts
+      a(href="techniques") Cooking techniques
+    a.icon(href='javascript:void(0);' onclick='myFunction()')
+      i.fa.fa-bars    
   ul(id="main-ul")
     li.
       #[a(href="facts") Food fun facts]
