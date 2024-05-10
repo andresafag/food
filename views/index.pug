@@ -18,13 +18,22 @@ html(lang="en")
             div(id="send-info")
               label(for="food") Favorite food or dish
               input(type="text", id="food", name="food")
+              span.tooltiptext 
               input(type="submit", id="submit", value="Yummy")
               i.fa-solid.fa-utensils
       article 
         div(id="contentForFood")
+          img(alt="welcomeimg", id="imge")
+          p.welcomigmsg Welcome my dear friend 
     include components/footer
 script(src="./hamburgerMenu.js")     
 script.
+  window.onload = randomp;
+  var pic_rand = ["./images/merengue.jpg", "./images/pasta.jpg", "./images/smoothie.jpg"];
+  function randomp(){
+    var randomNum = Math.floor(Math.random() * pic_rand.length);
+    document.getElementById("imge").src = pic_rand[randomNum];
+  }
   let theIdArray = [], //Array of the food ids
       imagesArray = [], //Array of the images sources                
       footerSection = document.querySelector('.footer-section'),
@@ -40,13 +49,18 @@ script.
       searchFood.addEventListener('click', function(e){
         e.preventDefault()
         if(foodInput.value.length == 0){
-          alert("Sorry you haven't entered anything")
+          let tooltipEmptyField =  document.querySelector(".tooltiptext") 
+          tooltipEmptyField.innerHTML = "You didnt enter anything"
+          tooltipEmptyField.style.visibility = "visible"
+          
+          setTimeout(function(){
+            tooltipEmptyField.style.visibility = "hidden"
+          }, 3000);
           console.log("El valor del input es: ", foodInput.value, " y la extension es: ", foodInput.value.length)
-          contentForFood.textContent = ''
           return
         }
         else if (foodInput.value.length > 0){
-          contentForFood.textContent = ''
+          //- contentForFood.textContent = ''
           theIdArray=[]
           imagesArray=[]
            /* Here we start the search */
@@ -55,12 +69,18 @@ script.
             return response.json()
             })
           .then(response =>{
-            console.log("Esto es lo que devuelve la respuesta del foodInfo: ", response.results , " y la extension de la respuesta del foodInfo: ", response.results.length);
             if(response.results.length == 0){
-              alert("That food is not in the database")
+              let tooltipEmptyField =  document.querySelector(".tooltiptext") 
+              tooltipEmptyField.innerHTML = "No such food information in the database"
+              tooltipEmptyField.style.visibility = "visible"
+              setTimeout(function(){
+                tooltipEmptyField.style.visibility = "hidden"
+                randomp()
+              }, 3000);
               /* If response is not successful stops the search */
               return
             }
+            contentForFood.textContent = ''
             response.results.forEach(food=>{
                /* Here we get the ids of all the results and put them on an array */
               theIdArray.push(food.id)

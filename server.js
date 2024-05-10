@@ -1,6 +1,6 @@
 let express = require('express'),
     app = express(),
-    cookingTechniques = require("./dao_layer/models").cookingTechniques
+    { cookingTechniques,food_funfacts } = require("./dao_layer/models")
     bodyParser = require('body-parser'),
     router = express.Router()
 
@@ -16,8 +16,12 @@ router
   .get('/', function(req, res){
     res.render("index", {apiKey:apiKey})
   })
-  .get('/facts', function(req, res){
-    res.render("facts")
+  .get('/facts', async function(req, res){
+    let count = await food_funfacts.countDocuments()
+    let random = Math.floor(Math.random() * count)
+    let foodFacts = await food_funfacts.find().skip(random).limit(5).sort({description:-1})
+     
+    res.render("facts", {facts:foodFacts})
   })
   .get('/techniques', async function(req, res){
     let count = await cookingTechniques.countDocuments()

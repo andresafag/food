@@ -7,7 +7,6 @@
 
  /* HEADER AND NAVIGATION BAR  */
 nav {
-  border: 10px solid rgb(255,240,245);
   height: 50vh;
   width: auto;
   position: relative;
@@ -86,14 +85,14 @@ nav {
 
 /* Style the hamburger menu */
 #div-nav-items a.icon {
-  background-color: #ddd;
   display: block;
   position: absolute;
   right: 5px;
   top: 5px;
+  font-size: xx-large;
 }
  
-#div-nav-items a:hover {
+#div-nav-items #myLinks>a:hover {
   background-color: #ddd;
   color: black;
 }
@@ -125,6 +124,11 @@ nav {
 
 /* MAIN CONTENT */
 
+#imge {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
 
 #submit_section {
   border: 10px solid rgb(255,240,245);
@@ -191,6 +195,7 @@ nav {
   padding: 3%;
   border-style: groove;
   border-radius: 10px;
+  text-align: center;
 }
 
 #main-content {
@@ -206,8 +211,40 @@ nav {
   }
   
 }
+ /* Tooltip tip css */
+
+#send-info .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
 
 /* styles for the food content box */
+
+#contentForFood {
+  width: 100%;
+  height: 350px;
+  position: relative;
+}
+
+.welcomigmsg {
+   position: absolute;
+   left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 45px;
+  white-space: nowrap;
+}
+
 
 .foodContentboxTittle {
   font-family: 'Abel', sans-serif;
@@ -268,10 +305,10 @@ border-radius: 20px;
 /* FACTS */
 
 #facts_section {
-  border: 2px solid rgb(230,200,250);;
   height: fit-content;
-  width: 98%;
+  width: 90%;
   margin: 10px auto auto auto;
+  padding: 3%;
 }
 
 #facts_div_title p{
