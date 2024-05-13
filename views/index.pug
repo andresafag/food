@@ -24,7 +24,7 @@ html(lang="en")
       article 
         div(id="contentForFood")
           img(alt="welcomeimg", id="imge")
-          p.welcomigmsg Welcome my dear friend 
+          p.welcomigmsg DELIGHTNESS IS ONE CLICK AWAY 
     include components/footer
 script(src="./hamburgerMenu.js")     
 script.
@@ -56,7 +56,6 @@ script.
           setTimeout(function(){
             tooltipEmptyField.style.visibility = "hidden"
           }, 3000);
-          console.log("El valor del input es: ", foodInput.value, " y la extension es: ", foodInput.value.length)
           return
         }
         else if (foodInput.value.length > 0){
@@ -92,54 +91,24 @@ script.
                 return respo.json()
                 })
               .then(respon => {
-                       /* We create a div container for each food description along with its image */
-                       let foodContentBox=document.createElement('div')
-                       let adittionalContentBox=document.createElement('div')
-                       contentForFood.append(foodContentBox)
-                       contentForFood.append(adittionalContentBox)
-                       
-                       /* each food div is created */
-                       let div_food_box = document.createElement('div')
-                       
-                       /* each div for food title is created */
-                       let food_title_box = document.createElement('div')
-                       
-                       /* extracting the food title */
-                       let food_title = document.createElement('h4').textContent = respon.title
-                      
-                       /* adding styles to the div for food and for the title too */
-                       food_title_box.classList.add('title')
-                       div_food_box.classList.add('foodContent')
-                       /* appending title text to the div title  */
-                       food_title_box.append(food_title)
-                       foodContentBox.append(food_title_box)
-                       contentForFood.append(div_food_box)
-                       
-                       
-                       /* adding the image */
-                       let preparation = respon.instructions.replace(/<ol>|<li>|<\/li>|<\/ol>/g, '');
-                       div_food_box.innerHTML = `<img class="recipeimg" src=${respon.image}>`
-                       div_food_box.append(preparation)
-                      
-                      foodContentBox.classList.add('foodContentboxTittle')
-                      
-                      adittionalContentBox.classList.add('adittionalContent')
-                       
-                       let headerIngredient=document.createElement('h4') 
-                       headerIngredient.textContent="Ingredients: "
-                       
-                       adittionalContentBox.append(headerIngredient)
-                      for(var ingredient = 0;ingredient < respon.extendedIngredients.length; ingredient++){
-                        let ingredientItem=document.createElement('p') 
-                        ingredientItem.textContent=[ingredient+1] + ": " + respon.extendedIngredients[ingredient].name  
-                        adittionalContentBox.append(ingredientItem)   
-                       }  
-                       
-                       let foodTime=document.createElement('span')  
-                       foodTime.style.fontWeight='700'
-                       foodTime.style.margin = 'auto' 
-                       foodTime.textContent= "Ready in: " + respon.readyInMinutes + " minutes"  
-                       adittionalContentBox.append(foodTime)  
+                  let preparation = respon.instructions.replace(/<ol>|<li>|<\/li>|<\/ol>/g, '');
+                 
+                  let htmlStructure = `<div id="mainfoodcontainer">
+                      <div class="foodContentboxTittle">
+                        <div class="title">${respon.title}</div>
+                      </div>
+                      <div class="adittionalContent">
+                        <h4>Ingredients: </h4>
+                        ${respon.extendedIngredients.map((ingredient,index)=>`<p>${index+1} ${ingredient.name}</p>`).join("")}
+                        <span class="food-time">Ready in: " + ${respon.readyInMinutes} + " minutes</span>
+                      </div>
+                      <div class="foodContent">
+                        <img class="recipeimg" src=${respon.image}>${preparation}
+                      </div>
+                                      </div>` 
+
+                  contentForFood.innerHTML += htmlStructure
+
                 })
             }
             })
