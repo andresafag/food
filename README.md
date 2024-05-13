@@ -1,9 +1,10 @@
 
 # Hi, I'm Andres! 👋
 
-![Logo](https://raw.githubusercontent.com/andresafag/food/master/public/images/foodmania_logo.png?token=GHSAT0AAAAAACQ2TZTVPJ5KLIYEU6KYUGZAZSBOKTQ)
+![alt text](https://github.com/andresafag/food/blob/master/public/images/foodmania_logo.png "Logo")
 
-# Foodmania is an immersive experience
+
+# Foodmania is an immersive culinary experience
 
 Have you ever wonder what ingredients to use or how long it takes to cook certain dishes?. My wife has, so I decided to create a website to showcase exactly that along with cooking techniques and interesting food facts to add more fun to it.
 
