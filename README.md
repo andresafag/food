@@ -20,13 +20,21 @@ This projects is divided into 3 sections as described below:
 
 The main/index page is basically where all the magic happens. As soon as you type the dish or key word you want the information for and click on the Yummy button you will be seeing the recipes showing the ingredients as well as the preparation and the time to cook it.
 
+https://github.com/andresafag/food/assets/99931537/dd535ac4-c76f-4768-8f5f-c6b8517e5d44
+
  2. **Food facts**
 
 In here your mind will be blown away by some interesting food facts you probably did not know or heard about before. 
 
+https://github.com/andresafag/food/assets/99931537/5fb0a815-0992-4255-bc4f-37f073b50368
+
  3. **Cooking techniques**
  
 There's nothing that saves more time than the know how or techniques passed along by other people in our society. Why re-inventing the wheel if somebody else came up with that knowledge already.
+
+[file:///home/andres/Downloads/techniques.mp4](https://github.com/andresafag/food/assets/99931537/1917263d-fa80-4a2e-abab-bcbb6632a743)
+
+
 
 
 
