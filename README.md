@@ -34,14 +34,17 @@ There's nothing that saves more time than the know how or techniques passed alon
 
 [file:///home/andres/Downloads/techniques.mp4](https://github.com/andresafag/food/assets/99931537/1917263d-fa80-4a2e-abab-bcbb6632a743)
 
+I'll brake down the parts of the page
+
+- This is where we enter the dish we want to look up  
+
+![Screenshot from 2024-05-27 22-33-20](https://github.com/andresafag/food/assets/99931537/32666a30-3ced-47d5-80a6-ec6c1e8ec795)
+
+- These are the 2 options to search for the cooking techniques and food fun stuff   
+![Screenshot from 2024-05-27 22-33-53](https://github.com/andresafag/food/assets/99931537/5ae1215b-4709-4f48-bb24-4a6c14ec313c)
 
 
-
-
-
-
-
-
+Everytime we load the food fun facts and cooking techniques some random information gets pulled from the database and shown 
 
 
 
