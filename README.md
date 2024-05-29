@@ -26,13 +26,9 @@ https://github.com/andresafag/food/assets/99931537/dd535ac4-c76f-4768-8f5f-c6b85
 
 In here your mind will be blown away by some interesting food facts you probably did not know or heard about before. 
 
-https://github.com/andresafag/food/assets/99931537/5fb0a815-0992-4255-bc4f-37f073b50368
-
  3. **Cooking techniques**
  
 There's nothing that saves more time than the know how or techniques passed along by other people in our society. Why re-inventing the wheel if somebody else came up with that knowledge already.
-
-[file:///home/andres/Downloads/techniques.mp4](https://github.com/andresafag/food/assets/99931537/1917263d-fa80-4a2e-abab-bcbb6632a743)
 
 I'll brake down the parts of the page
 
@@ -40,11 +36,51 @@ I'll brake down the parts of the page
 
 ![Screenshot from 2024-05-27 22-33-20](https://github.com/andresafag/food/assets/99931537/32666a30-3ced-47d5-80a6-ec6c1e8ec795)
 
+- This is where the information is displayed for every dish found (name of the dish, ingredients and the time it takes to prepare the dish)
+
+![Screenshot from 2024-05-28 19-18-27](https://github.com/andresafag/food/assets/99931537/6f17626e-5520-4bd4-b480-6902a0d15078)
+
+
 - These are the 2 options to search for the cooking techniques and food fun stuff   
 ![Screenshot from 2024-05-27 22-33-53](https://github.com/andresafag/food/assets/99931537/5ae1215b-4709-4f48-bb24-4a6c14ec313c)
 
-
 Everytime we load the food fun facts and cooking techniques some random information gets pulled from the database and shown 
 
+https://github.com/andresafag/food/assets/99931537/5fb0a815-0992-4255-bc4f-37f073b50368
+
+[file:///home/andres/Downloads/techniques.mp4](https://github.com/andresafag/food/assets/99931537/1917263d-fa80-4a2e-abab-bcbb6632a743)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
