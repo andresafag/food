@@ -20,7 +20,7 @@ This projects is divided into 3 sections as described below:
 
 The main/index page is basically where all the magic happens. As soon as you type the dish or key word you want the information for and click on the Yummy button you will be seeing the recipes showing the ingredients as well as the preparation and the time to cook it.
 
-https://github.com/andresafag/food/assets/99931537/dd535ac4-c76f-4768-8f5f-c6b8517e5d44
+https://github.com/andresafag/food/assets/99931537/608f2d16-0299-4957-b2d3-192636b440b9
 
  2. **Food facts**
 
