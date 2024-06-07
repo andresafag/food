@@ -48,7 +48,8 @@ Everytime we load the food fun facts and cooking techniques some random informat
 
 https://github.com/andresafag/food/assets/99931537/5fb0a815-0992-4255-bc4f-37f073b50368
 
-[file:///home/andres/Downloads/techniques.mp4](https://github.com/andresafag/food/assets/99931537/1917263d-fa80-4a2e-abab-bcbb6632a743)
+https://github.com/andresafag/food/assets/99931537/50eae012-5794-4515-bb4f-3e8b5c80a1d0
+
 
 
 
