@@ -48,8 +48,16 @@ Everytime we load the food fun facts and cooking techniques some random informat
 
 https://github.com/andresafag/food/assets/99931537/e9843c38-448b-4f67-a9b0-c2a47ac800c3
 
-
 https://github.com/andresafag/food/assets/99931537/940cdafc-b9e8-44b0-8b82-37104b28c336
+
+
+
+| Technologies  | Version       | Purpose                |
+| -------------:|:-------------:| ----------------------:|
+| ![express (1)](https://github.com/andresafag/food/assets/99931537/dbc7c4c5-18fa-4963-a7ce-f303db8cf645)  | 4.17.3        | Web application framework     |
+| ![mongoose (1)](https://github.com/andresafag/food/assets/99931537/4e2cb41d-9909-43c2-be1b-146036e55e94)      | 8.3.1         | Object data modeling   |
+| ![pug](https://github.com/andresafag/food/assets/99931537/09b586dc-619f-482e-9a8c-df25bc36dfb5)           | 3.0.2         |  Template engine       |
+
 
 
 
