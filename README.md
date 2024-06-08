@@ -1,5 +1,5 @@
 
-# Hi, I'm Andres! 👋
+# Hi food lovers 👋
 
 ![alt text](https://github.com/andresafag/food/blob/master/public/images/foodmania_logo.png "Logo")
 
