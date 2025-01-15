@@ -17,8 +17,6 @@ This project is divided into 3 sections as described below:
 1. **Index**   
    The main/index page is where all the magic happens. As soon as you type the dish or keyword you want information for and click on the Yummy button, you will see the recipes shown.
 
-   ![Recipe Search](https://github.com/andresafag/food/assets/99931537/4fb6dcda-1d1b-41c9-ade2-15a3f19c1bed)
-
 2. **Food Facts**   
    Here, your mind will be blown away by some interesting food facts you probably didn't know or haven't heard about before.
 
@@ -40,9 +38,9 @@ Every time we load the food fun facts and cooking techniques, some random inform
 
 ## Videos
 
-- [Video 1](https://github.com/andresafag/food/assets/99931537/e9843c38-448b-4f67-a9b0-c2a47ac800c3)
-- [Video 2](https://github.com/andresafag/food/assets/99931537/940cdafc-b9e8-44b0-8b82-37104b28c336)
-
+- [The best cooking techniques](https://github.com/andresafag/food/assets/99931537/e9843c38-448b-4f67-a9b0-c2a47ac800c3)
+- [Find out about fun facts about food](https://github.com/andresafag/food/assets/99931537/940cdafc-b9e8-44b0-8b82-37104b28c336)
+- [Recipe Search](https://github.com/andresafag/food/assets/99931537/4fb6dcda-1d1b-41c9-ade2-15a3f19c1bed)
 ## Technologies
 
 | Technology  | Version | Purpose                    |
