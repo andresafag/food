@@ -6,10 +6,10 @@ on:
 jobs:
   run-on-clone:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
     - name: Run your custom script
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: echo "This workflow was triggered by a clone event"
