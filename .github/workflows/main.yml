@@ -1,9 +1,9 @@
 name: Repository Dispatch Trigger
 
 on:
-  repository_dispatch:
-    types: [clone]
-
+  pull_request:
+    branches: 
+      master
 jobs:
   run-on-clone:
     runs-on: ubuntu-latest
