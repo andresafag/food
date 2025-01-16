@@ -1,0 +1,16 @@
+name: Repository Dispatch Trigger
+
+on:
+  repository_dispatch:
+    types: [clone]
+
+jobs:
+  run-on-clone:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Run your custom script
+      run: echo "This workflow was triggered by a clone event"
