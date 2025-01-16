@@ -2,6 +2,7 @@ name: Repository Dispatch Trigger
 
 on:
   pull_request:
+    types: [opened]
     branches: 
       master
 jobs:
