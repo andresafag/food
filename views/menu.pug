@@ -1,0 +1,338 @@
+html(lang="en")
+  head
+    title= "Menu Search"
+    link(rel="stylesheet", href="./styles.css", type="text/css")
+    link(rel='preconnect' href='https://fonts.googleapis.com')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+    link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
+    script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
+    style.
+      #menu_search_section {
+        max-width: 860px;
+        margin: 2.5rem auto;
+        padding: 0 1.5rem 3rem;
+      }
+
+      #menu_search_section h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1.75rem;
+        color: #1a1a1a;
+        letter-spacing: -0.5px;
+      }
+
+      #menu-search-form {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 2rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      }
+
+      .form-section-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin: 1.5rem 0 0.75rem;
+      }
+
+      .form-section-label:first-child {
+        margin-top: 0;
+      }
+
+      .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-row label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .form-row input[type="text"],
+      .form-row input[type="number"] {
+        padding: 0.6rem 0.85rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: #111827;
+        background: #f9fafb;
+        transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .form-row input[type="text"]:focus,
+      .form-row input[type="number"]:focus {
+        border-color: #f97316;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+      }
+
+      .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem 1.25rem;
+      }
+
+      .form-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.75rem 1.25rem;
+      }
+
+      .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 1.25rem 0 1.75rem;
+      }
+
+      .checkbox-row input[type="checkbox"] {
+        width: 17px;
+        height: 17px;
+        accent-color: #f97316;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .checkbox-row label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #374151;
+        cursor: pointer;
+      }
+
+      #search-actions {
+        border-top: 1px solid #f3f4f6;
+        padding-top: 1.5rem;
+      }
+
+      #search-menu {
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        background: #f97316;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 9px;
+        cursor: pointer;
+        letter-spacing: 0.02em;
+        transition: background 0.15s, transform 0.1s;
+      }
+
+      #search-menu:hover {
+        background: #ea6c0a;
+      }
+
+      #search-menu:active {
+        transform: scale(0.98);
+      }
+
+      #menuResults {
+        margin-top: 2.5rem;
+      }
+
+      .menu-item-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        gap: 1.25rem;
+        align-items: flex-start;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        transition: box-shadow 0.15s;
+      }
+
+      .menu-item-card:hover {
+        box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+      }
+
+      .menu-item-card .menu-item-image {
+        width: 88px;
+        height: 88px;
+        object-fit: cover;
+        border-radius: 8px;
+        flex-shrink: 0;
+        background: #f3f4f6;
+      }
+
+      .menu-item-info h2 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 0 0 0.3rem;
+      }
+
+      .menu-item-info p {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin: 0.2rem 0;
+      }
+
+      .menu-item-info p strong {
+        color: #374151;
+      }
+
+      .menu-item-info .calorie-badge {
+        display: inline-block;
+        background: #fff7ed;
+        color: #c2410c;
+        border: 1px solid #fed7aa;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        margin-top: 0.5rem;
+      }
+
+      p.error {
+        color: #dc2626;
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+      }
+
+  body
+    nav
+      include components/nav.pug
+    section(id="menu_search_section")
+      h1 Menu Item Search
+
+      form(id="menu-search-form")
+
+        p.form-section-label Search
+        .form-row
+          label(for="query") Query
+          input(type="text", id="query", name="query", placeholder="e.g. burger, salad, tacos…")
+
+        p.form-section-label Calories
+        .form-grid-2
+          .form-row
+            label(for="minCalories") Min
+            input(type="number", id="minCalories", name="minCalories", min="0", placeholder="0")
+          .form-row
+            label(for="maxCalories") Max
+            input(type="number", id="maxCalories", name="maxCalories", min="0", placeholder="any")
+
+        p.form-section-label Carbs (g)
+        .form-grid-2
+          .form-row
+            label(for="minCarbs") Min
+            input(type="number", id="minCarbs", name="minCarbs", min="0", placeholder="0")
+          .form-row
+            label(for="maxCarbs") Max
+            input(type="number", id="maxCarbs", name="maxCarbs", min="0", placeholder="any")
+
+        p.form-section-label Protein (g)
+        .form-grid-2
+          .form-row
+            label(for="minProtein") Min
+            input(type="number", id="minProtein", name="minProtein", min="0", placeholder="0")
+          .form-row
+            label(for="maxProtein") Max
+            input(type="number", id="maxProtein", name="maxProtein", min="0", placeholder="any")
+
+        p.form-section-label Fat (g)
+        .form-grid-2
+          .form-row
+            label(for="minFat") Min
+            input(type="number", id="minFat", name="minFat", min="0", placeholder="0")
+          .form-row
+            label(for="maxFat") Max
+            input(type="number", id="maxFat", name="maxFat", min="0", placeholder="any")
+
+        p.form-section-label Results
+        .form-grid-2
+          .form-row
+            label(for="number") Number of results
+            input(type="number", id="number", name="number", min="1", max="20", value="5")
+          .form-row
+            label(for="offset") Offset
+            input(type="number", id="offset", name="offset", min="0", value="0")
+
+        .checkbox-row
+          input(type="checkbox", id="addMenuItemInformation", name="addMenuItemInformation")
+          label(for="addMenuItemInformation") Include full nutrition information
+
+        div(id="search-actions")
+          button(type="submit", id="search-menu")
+            i.fa.fa-search(aria-hidden="true")
+            |  Search Menu Items
+
+      article
+        div(id="menuResults")
+
+    include components/footer
+    script(src="./hamburgerMenu.js")
+    script.
+      const menuForm = document.querySelector('#menu-search-form');
+      const menuResults = document.querySelector('#menuResults');
+
+      menuForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const params = new URLSearchParams();
+        const query = document.querySelector('#query').value.trim();
+        if (!query) {
+          menuResults.innerHTML = '<p class="error">Please enter a search query.</p>';
+          return;
+        }
+        params.append('query', query);
+        const fields = ['minCalories','maxCalories','minCarbs','maxCarbs','minProtein','maxProtein','minFat','maxFat','number','offset'];
+        fields.forEach(id => {
+          const value = document.querySelector('#' + id).value;
+          if (value) params.append(id, value);
+        });
+        const addInfo = document.querySelector('#addMenuItemInformation').checked;
+        if (addInfo) params.append('addMenuItemInformation', 'true');
+        const url = `https://api.spoonacular.com/food/menuItems/search?${params.toString()}&apiKey=#{apiKey}`;
+        menuResults.innerHTML = '<p>Searching menu items…</p>';
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            if (!data.menuItems || data.menuItems.length === 0) {
+              menuResults.innerHTML = '<p>No menu items found. Try a different query or fewer filters.</p>';
+              return;
+            }
+            menuResults.innerHTML = data.menuItems.map(item => {
+              const description = item.description ? `<p>${item.description}</p>` : '';
+              const calories = item.nutrition && item.nutrition.nutrients
+                ? item.nutrition.nutrients.find(n => n.name === 'Calories')
+                : null;
+              const isRealImage = item.image && /^https:\/\/img\.spoonacular\.com\/menu-items\/\d+\.(png|jpg|jpeg|webp)$/.test(item.image);
+              const imageHtml = isRealImage
+                ? `<img src="${item.image}" alt="${item.title || item.name}" class="menu-item-image" />`
+                : '';
+              const calorieBadge = calories
+                ? `<span class="calorie-badge">${Math.round(calories.amount)} ${calories.unit}</span>`
+                : '';
+              return `
+                <div class="menu-item-card">
+                  ${imageHtml}
+                  <div class="menu-item-info">
+                    <h2>${item.title || item.name}</h2>
+                    ${description}
+                    <p><strong>Restaurant:</strong> ${item.restaurantChain || 'N/A'}</p>
+                    ${calorieBadge}
+                  </div>
+                </div>
+              `;
+            }).join('');
+          })
+          .catch(err => {
+            menuResults.innerHTML = `<p class="error">Error: ${err.message}</p>`;
+          });
+      });

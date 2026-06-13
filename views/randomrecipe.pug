@@ -1,0 +1,91 @@
+doctype html
+html(lang="en")
+  head
+    title= "Random Recipe"
+    link(rel="stylesheet", href="./styles.css", type="text/css")
+    link(rel='preconnect' href='https://fonts.googleapis.com')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+    link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
+    script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
+  body  
+    nav
+      include components/nav.pug
+    section(id="submit_section")
+      div(id="form-section")
+        div
+          form
+            div(id="send-info")
+              input(type="submit", id="submit", value="Get Random Recipe")
+              i.fa-solid.fa-dice
+              span.tooltiptext 
+      article 
+        div(id="contentForFood")
+          img(alt="welcomeimg", id="imge")
+          p.welcomigmsg GET YOUR RANDOM RECIPE TODAY
+    include components/footer
+script(src="./hamburgerMenu.js")     
+script.
+  var pic_rand = ["./images/merengue.jpg", "./images/pasta.jpg", "./images/smoothie.jpg"];
+  
+  function randomp(){
+    var randomNum = Math.floor(Math.random() * pic_rand.length);
+    document.getElementById("imge").src = pic_rand[randomNum];
+  }
+
+  window.onload = randomp;
+
+  let contentForFood = document.querySelector('#contentForFood'),
+      searchFood = document.querySelector('#submit'),
+      randomRecipeEndpoint = `https://api.spoonacular.com/recipes/random?number=1&apiKey=#{apiKey}`;
+
+  /* on click the request starts searching for a random recipe */
+  searchFood.addEventListener('click', function(e){
+    e.preventDefault()
+    contentForFood.textContent = ''
+    
+    fetch(randomRecipeEndpoint)
+    .then(response => {
+      return response.json()
+    })
+    .then(response => {
+      if(!response.recipes || response.recipes.length == 0){
+        let tooltipEmptyField = document.querySelector(".tooltiptext") 
+        tooltipEmptyField.innerHTML = "Could not fetch random recipe"
+        tooltipEmptyField.style.visibility = "visible"
+        setTimeout(function(){
+          tooltipEmptyField.style.visibility = "hidden"
+          randomp()
+        }, 3000);
+        return
+      }
+
+      let recipe = response.recipes[0];
+      let preparation = recipe.instructions ? recipe.instructions.replace(/<ol>|<li>|<\/li>|<\/ol>/g, '') : 'No instructions available';
+      
+      let htmlStructure = `<div id="mainfoodcontainer">
+          <div class="foodContentboxTittle">
+            <div class="title">${recipe.title}</div>
+          </div>
+          <div class="adittionalContent">
+            <h4>Ingredients: </h4>
+            ${recipe.extendedIngredients.map((ingredient, index) => `<p>${index + 1} ${ingredient.name}</p>`).join("")}
+            <span class="food-time">Ready in: ${recipe.readyInMinutes} minutes</span>
+          </div>
+          <div class="foodContent">
+            <img class="recipeimg" src="${recipe.image}">${preparation}
+          </div>
+        </div>`;
+      
+      contentForFood.innerHTML = htmlStructure;
+    })
+    .catch(error => {
+      let tooltipEmptyField = document.querySelector(".tooltiptext") 
+      tooltipEmptyField.innerHTML = "Error fetching recipe"
+      tooltipEmptyField.style.visibility = "visible"
+      setTimeout(function(){
+        tooltipEmptyField.style.visibility = "hidden"
+        randomp()
+      }, 3000);
+    })
+  })
