@@ -34,54 +34,6 @@ This project is divided into 3 sections as described below:
 
 ## 🏗️ System Architecture
 
-```
-┌─────────────────┐
-│     Browser     │
-│   User Client   │
-└────────┬────────┘
-         │ HTTP Request
-         ▼
-┌─────────────────┐
-│   Express.js    │
-│ Application API │
-└────────┬────────┘
-         │
-         │ Request Data
-         ▼
-┌─────────────────┐
-│  Spoonacular    │
-│   External API  │
-└────────┬────────┘
-         │
-         │ API Response
-         ▼
-┌─────────────────┐
-│  Pug Templates  │
-│ Server Rendering│
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ HTML Response   │
-└─────────────────┘
-```
-
-```mermaid
-flowchart TD
-
-A[User Request] --> B[Express Route]
-
-B --> C[Controller Logic]
-
-C --> E[Spoonacular API]
-
-E --> F[Data Processing]
-
-F --> G[Pug Template Rendering]
-
-G --> H[HTML Response]
-```
-
 
 
 ```mermaid
