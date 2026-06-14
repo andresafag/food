@@ -7,193 +7,6 @@ html(lang="en")
     link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
     link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
     script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
-    style.
-      #planner_section {
-        max-width: 860px;
-        margin: 2.5rem auto;
-        padding: 0 1.5rem 3rem;
-      }
-
-      #planner_section h1 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 1.75rem;
-        color: #1a1a1a;
-        letter-spacing: -0.5px;
-      }
-
-      #planner-form {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
-        padding: 2rem;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      }
-
-      .form-section-label {
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #9ca3af;
-        margin: 1.5rem 0 0.75rem;
-      }
-
-      .form-row {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-        margin-bottom: 1rem;
-      }
-
-      .form-row label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #374151;
-      }
-
-      .form-row input[type="text"],
-      .form-row input[type="number"],
-      .form-row select {
-        padding: 0.6rem 0.85rem;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        color: #111827;
-        background: #f9fafb;
-        transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-        outline: none;
-        width: 100%;
-        box-sizing: border-box;
-      }
-
-      .form-row input[type="text"]:focus,
-      .form-row input[type="number"]:focus,
-      .form-row select:focus {
-        border-color: #f97316;
-        background: #fff;
-        box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
-      }
-
-      .form-grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem 1.25rem;
-      }
-
-      #generatePlan {
-        width: 100%;
-        padding: 0.95rem 1rem;
-        background: #f97316;
-        color: #fff;
-        font-size: 1rem;
-        font-weight: 700;
-        border: none;
-        border-radius: 9px;
-        cursor: pointer;
-        letter-spacing: 0.02em;
-        transition: background 0.15s, transform 0.1s;
-        margin-top: 1rem;
-      }
-
-      #generatePlan:hover {
-        background: #ea6c0a;
-      }
-
-      #generatePlan:active {
-        transform: scale(0.98);
-      }
-
-      .tooltiptext {
-        display: block;
-        color: #dc2626;
-        font-size: 0.9rem;
-        margin-top: 0.75rem;
-        visibility: hidden;
-      }
-
-      #mealPlanContent {
-        margin-top: 2rem;
-      }
-
-      .week-day-label {
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #9ca3af;
-        margin: 1.75rem 0 0.75rem;
-      }
-
-      .week-day-label:first-child {
-        margin-top: 0;
-      }
-
-      .week-nutrients {
-        background: #fff7ed;
-        border: 1px solid #fed7aa;
-        border-radius: 10px;
-        padding: 0.85rem 1.25rem;
-        margin-top: 0.5rem;
-        display: flex;
-        gap: 1.5rem;
-        flex-wrap: wrap;
-      }
-
-      .week-nutrients span {
-        font-size: 0.82rem;
-        color: #c2410c;
-        font-weight: 600;
-      }
-
-      .week-nutrients span b {
-        color: #7c2d12;
-      }
-
-      .meal-item-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 1.25rem 1.5rem;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-        transition: box-shadow 0.15s;
-      }
-
-      .meal-item-card:hover {
-        box-shadow: 0 4px 14px rgba(0,0,0,0.09);
-      }
-
-      .meal-item-card img {
-        width: 88px;
-        height: 88px;
-        object-fit: cover;
-        border-radius: 8px;
-        background: #f3f4f6;
-        flex-shrink: 0;
-      }
-
-      .meal-item-card h2 {
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: #111827;
-        margin: 0 0 0.3rem;
-      }
-
-      .meal-item-card p {
-        margin: 0.2rem 0;
-        font-size: 0.875rem;
-        color: #6b7280;
-      }
-
-      .planMessage {
-        font-size: 1rem;
-        color: #4b5563;
-      }
-
   body
     nav
       include components/nav.pug
@@ -253,8 +66,25 @@ html(lang="en")
         `;
       }
 
-      function renderDay(meals) {
-        return meals.map(mealCardHTML).join('');
+      function renderDay(dayData) {
+        // If the object or meals array is missing, return an empty string
+        if (!dayData || !dayData.meals) return '';
+
+        const { meals, nutrients } = dayData;
+
+        const nutrientBar = nutrients ? `
+          <div class="week-nutrients">
+            <span><b>Calories:</b> ${Math.round(nutrients.calories)} kcal</span>
+            <span><b>Protein:</b> ${Math.round(nutrients.protein)}g</span>
+            <span><b>Fat:</b> ${Math.round(nutrients.fat)}g</span>
+            <span><b>Carbs:</b> ${Math.round(nutrients.carbohydrates)}g</span>
+          </div>
+        ` : '';
+
+        return `
+          ${nutrientBar}
+          ${meals.map(mealCardHTML).join('')}
+        `;
       }
 
       function renderWeek(week) {
@@ -302,8 +132,9 @@ html(lang="en")
           .then(r => r.json())
           .then(data => {
             // day response → { meals: [...], nutrients: {} }
+            console.log(data);
             if (data.meals) {
-              mealPlanContent.innerHTML = renderDay(data.meals);
+              mealPlanContent.innerHTML = renderDay(data);
             }
             // week response → { week: { monday: { meals: [...] }, ... } }
             else if (data.week) {
