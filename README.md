@@ -34,6 +34,7 @@ This project is divided into 3 sections as described below:
 
 ## 🏗️ System Architecture
 
+```
 ┌─────────────────┐
 │     Browser     │
 │   User Client   │
@@ -45,24 +46,25 @@ This project is divided into 3 sections as described below:
 │ Application API │
 └────────┬────────┘
          │
-         ├───────────────────────┐
-         │                       │
-         ▼                       ▼
-┌─────────────────┐     ┌─────────────────┐
-│    MongoDB      │     │  Spoonacular    │
-│ Application DB  │     │   External API  │
-└─────────────────┘     └─────────────────┘
-         │                       │
-         └───────────┬───────────┘
-                     ▼
-          ┌─────────────────┐
-          │  Pug Templates  │
-          │ Server Rendering│
-          └────────┬────────┘
-                   ▼
-          ┌─────────────────┐
-          │ HTML Response   │
-          └─────────────────┘
+         │ Request Data
+         ▼
+┌─────────────────┐
+│  Spoonacular    │
+│   External API  │
+└────────┬────────┘
+         │
+         │ API Response
+         ▼
+┌─────────────────┐
+│  Pug Templates  │
+│ Server Rendering│
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ HTML Response   │
+└─────────────────┘
+```
 
 ```mermaid
 flowchart TD
@@ -71,11 +73,9 @@ A[User Request] --> B[Express Route]
 
 B --> C[Controller Logic]
 
-C --> D[MongoDB]
 C --> E[Spoonacular API]
 
-D --> F[Data Processing]
-E --> F
+E --> F[Data Processing]
 
 F --> G[Pug Template Rendering]
 
@@ -83,6 +83,8 @@ G --> H[HTML Response]
 ```
 
 
+
+```mermaid
 graph LR
 
 Client[Client Browser]
@@ -91,19 +93,18 @@ Express[Express Server]
 
 Views[Pug Views]
 
-Mongo[(MongoDB)]
-
 API[Spoonacular API]
 
 Client --> Express
-
-Express --> Mongo
 
 Express --> API
 
 Express --> Views
 
 Views --> Client
+```
+
+
 
 ## ✨ Features
 Recipe Discovery
