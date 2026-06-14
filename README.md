@@ -80,8 +80,6 @@ Randomized fact generation
 | Frontend          | HTML, CSS, JavaScript |
 | Rendering         | Pug                   |
 | Backend           | Node.js, Express.js   |
-| Database          | MongoDB               |
-| ODM               | Mongoose              |
 | External Services | Spoonacular API       |
 | CI/CD             | GitHub Actions        |
 | Version Control   | Git                   |
