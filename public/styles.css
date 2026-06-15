@@ -37,19 +37,24 @@ nav {
   width:auto;
   position: relative;
   border-radius: 10px;
-  margin-right: 45px;
+  margin-right: 20px;
   margin-top: 10px;
-  background-color: rgba(0,0,0, 0.1);
-  font-size: 22px;
-  font-weight: 800;
+  background-color: rgba(0,0,0, 0.08);
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  padding: 0.3rem 0.5rem;
 }
 
 #main-ul > li {
-  display: inline-block;
-  padding: 9px;
-  margin: 2px;
-  font-size: 1.7rem;
-  padding-left: 25px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 0;
+  font-size: 1rem;
 }
 
 #main-ul > li a {
@@ -272,6 +277,17 @@ nav {
   margin-bottom: 1.5%;
 }
 
+.mainfoodcontainer,
+#mainfoodcontainer {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  margin: 1.5rem auto;
+  padding: 1.2rem;
+  max-width: 960px;
+  overflow: hidden;
+}
 
 .foodContent {
   min-height: 300px;

@@ -245,37 +245,41 @@ html(lang="en")
 
         function renderResult(res) {
           if (!res) return '<p class="planMessage">No pairing result.</p>';
-          let html = '';
-
-          if (res.pairingText) {
-            html += `
-              <div class="pairing-suggestion">
-                <h2>Pairing Suggestion</h2>
-                <p>${res.pairingText}</p>
-              </div>
-            `;
-          }
+          let productHtml = '';
 
           if (Array.isArray(res.productMatches) && res.productMatches.length) {
-            html += '<p class="products-label">Recommended Products</p>';
-            res.productMatches.forEach(p => {
-              const img = p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.title}" />` : '';
-              const buy = p.link ? `<a href="${p.link}" target="_blank">Buy</a>` : '';
-              html += `
-                <div class="product-card">
+            productHtml = res.productMatches.map(p => {
+              const img = p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.title}" class="recipeimg" />` : '';
+              const buy = p.link ? `<p><a href="${p.link}" target="_blank">Buy</a></p>` : '';
+              const price = p.price ? `<p><strong>Price:</strong> ${p.price}</p>` : '';
+              const description = p.description ? `<p>${p.description}</p>` : '';
+              return `
+                <div class="foodContent" style="margin-bottom:1rem;">
                   ${img}
-                  <div class="prod-meta">
-                    <h3>${p.title}</h3>
-                    <p><strong>Price:</strong> ${p.price || 'N/A'}</p>
-                    ${p.description ? `<p>${p.description}</p>` : ''}
+                  <div class="adittionalContent">
+                    <h4>${p.title}</h4>
+                    ${description}
+                    ${price}
                     ${buy}
                   </div>
                 </div>
               `;
-            });
+            }).join('');
           }
 
-          return html || '<p class="planMessage">No results found.</p>';
+          return `
+            <div class="mainfoodcontainer">
+              <div class="foodContentboxTittle">
+                <div class="title">Wine Pairing Result</div>
+              </div>
+              <div class="adittionalContent">
+                ${res.pairingText ? `<p>${res.pairingText}</p>` : '<p>No pairing text available.</p>'}
+              </div>
+              <div class="foodContent">
+                ${productHtml || '<p>No recommended wines available.</p>'}
+              </div>
+            </div>
+          `;
         }
 
         async function searchHandler(e) {

@@ -8,6 +8,10 @@ html(lang="en")
     link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
     link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
     script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
+    style.
+      #send-info { text-align: center; }
+      #send-info .food-title { margin-bottom: 1rem; }
+      #send-info .food-title h2 { margin: 0; font-size: 1.8rem; font-family: 'Pangolin', cursive; color: #222; text-transform: uppercase; letter-spacing: 0.05em; }
   body  
     nav
       include components/nav.pug
@@ -16,7 +20,8 @@ html(lang="en")
         div
           form
             div(id="send-info")
-              label(for="food") Favorite food or dish
+              div(class="food-title")
+                h2 Favorite food or dish
               input(type="text", id="food", name="food")
               span.tooltiptext 
               input(type="submit", id="submit", value="Yummy")
@@ -24,7 +29,6 @@ html(lang="en")
       article 
         div(id="contentForFood")
           img(alt="welcomeimg", id="imge")
-          p.welcomigmsg DELIGHTNESS IS ONE CLICK AWAY 
     include components/footer
 script(src="./hamburgerMenu.js")     
 script.

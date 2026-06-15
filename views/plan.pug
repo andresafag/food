@@ -240,14 +240,19 @@ html(lang="en")
         const imgSrc = meal.image
           ? (meal.image.startsWith('http') ? meal.image : IMG_BASE + meal.image)
           : '';
-        const imgTag = imgSrc ? `<img src="${imgSrc}" alt="${meal.title}" />` : '';
+        const imgTag = imgSrc ? `<img src="${imgSrc}" alt="${meal.title}" class="recipeimg" />` : '';
         return `
-          <div class="meal-item-card">
-            ${imgTag}
-            <div>
-              <h2>${meal.title}</h2>
+          <div class="mainfoodcontainer">
+            <div class="foodContentboxTittle">
+              <div class="title">${meal.title}</div>
+            </div>
+            <div class="adittionalContent">
               <p>Ready in: ${meal.readyInMinutes} minutes</p>
               <p>Servings: ${meal.servings}</p>
+            </div>
+            <div class="foodContent">
+              ${imgTag}
+              ${meal.sourceUrl ? `<p><a href="${meal.sourceUrl}" target="_blank">View full recipe</a></p>` : ''}
             </div>
           </div>
         `;
