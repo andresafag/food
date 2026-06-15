@@ -27,6 +27,9 @@ router
   .get('/planner', function(req, res){
     res.render("plan", {apiKey:apiKey})
   })
+  .get('/wine-pairs', function(req, res){
+    res.render("wine-pairs", {apiKey:apiKey})
+  })
 
 
 app.use(router)
