@@ -15,6 +15,9 @@ router
   .get('/', function(req, res){
     res.render("index", {apiKey:apiKey})
   })
+  .get('/mealplan', function(req, res){
+    res.render("mealplanner", {apiKey:apiKey})
+  })
   .get('/random', function(req, res){
     res.render("randomrecipe", {apiKey:apiKey})
   })
@@ -23,6 +26,9 @@ router
   })
   .get('/planner', function(req, res){
     res.render("plan", {apiKey:apiKey})
+  })
+  .get('/wine-pairs', function(req, res){
+    res.render("wine-pairs", {apiKey:apiKey})
   })
 
 

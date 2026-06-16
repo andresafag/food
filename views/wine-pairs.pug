@@ -1,0 +1,315 @@
+doctype html
+html(lang="en")
+  head
+    title= "Wine Pairing"
+    link(rel="stylesheet", href="./styles.css", type="text/css")
+    link(rel='preconnect' href='https://fonts.googleapis.com')
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+    link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
+    script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
+    style.
+      #submit_section {
+        max-width: 860px;
+        margin: 2.5rem auto;
+        padding: 0 1.5rem 3rem;
+      }
+
+      #submit_section h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1.75rem;
+        color: #1a1a1a;
+        letter-spacing: -0.5px;
+      }
+
+      #wine-form {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 2rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      }
+
+      .form-section-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin: 1.5rem 0 0.75rem;
+      }
+
+      .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-row label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .form-row input[type="text"],
+      .form-row input[type="number"] {
+        padding: 0.6rem 0.85rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: #111827;
+        background: #f9fafb;
+        transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .form-row input[type="text"]:focus,
+      .form-row input[type="number"]:focus {
+        border-color: #f97316;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(249,115,22,0.12);
+      }
+
+      .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem 1.25rem;
+      }
+
+      #submit {
+        width: 100%;
+        padding: 0.95rem 1rem;
+        background: #f97316;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 9px;
+        cursor: pointer;
+        letter-spacing: 0.02em;
+        transition: background 0.15s, transform 0.1s;
+        margin-top: 1rem;
+      }
+
+      #submit:hover { background: #ea6c0a; }
+      #submit:active { transform: scale(0.98); }
+
+      .tooltiptext {
+        display: block;
+        color: #dc2626;
+        font-size: 0.9rem;
+        margin-top: 0.75rem;
+        visibility: hidden;
+      }
+
+      #contentForWine {
+        margin-top: 2rem;
+      }
+
+      .planMessage {
+        font-size: 1rem;
+        color: #4b5563;
+      }
+
+      .pairing-suggestion {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      }
+
+      .pairing-suggestion h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 0 0 0.5rem;
+      }
+
+      .pairing-suggestion p {
+        font-size: 0.9rem;
+        color: #6b7280;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      .products-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        margin: 1.75rem 0 0.75rem;
+      }
+
+      .product-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        transition: box-shadow 0.15s;
+      }
+
+      .product-card:hover {
+        box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+      }
+
+      .product-card img {
+        width: 88px;
+        height: 88px;
+        object-fit: cover;
+        border-radius: 8px;
+        background: #f3f4f6;
+        flex-shrink: 0;
+      }
+      .product-card .prod-meta {
+        min-width: 0;
+      }
+
+      .prod-meta h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 0 0 0.3rem;
+      }
+
+      .prod-meta p {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin: 0.2rem 0;
+      }
+
+      .prod-meta a {
+        display: inline-block;
+        margin-top: 0.5rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #f97316;
+        text-decoration: none;
+        border: 1px solid #fed7aa;
+        background: #fff7ed;
+        padding: 0.25rem 0.7rem;
+        border-radius: 20px;
+        transition: background 0.15s;
+      }
+
+      .prod-meta a:hover {
+        background: #ffedd5;
+      }
+
+  body
+    nav
+      include components/nav.pug
+    section(id="submit_section")
+      h1 Wine Pairing
+      form(id="wine-form")
+        p.form-section-label Search
+        .form-grid-2
+          .form-row
+            label(for="food") Food, dish or cuisine
+            input(type="text", id="food", name="food", placeholder="e.g. steak, salmon, italian")
+          .form-row
+            label(for="maxPrice") Max Price (USD) — optional
+            input(type="number", id="maxPrice", name="maxPrice", min="0", placeholder="e.g. 50")
+        span.tooltiptext
+        button(type="submit", id="submit")
+          i.fa.fa-wine-glass(aria-hidden="true")
+          |  Find Wines
+      div(id="contentForWine")
+        p.planMessage Find the perfect wine for your dish.
+    include components/footer
+    script(src="./hamburgerMenu.js")
+    script.
+      (function(){
+        const foodInput      = document.querySelector('#food'),
+              priceInput     = document.querySelector('#maxPrice'),
+              contentForWine = document.querySelector('#contentForWine'),
+              searchWine     = document.querySelector('#submit'),
+              tooltipText    = document.querySelector('.tooltiptext');
+
+        function showError(msg) {
+          tooltipText.innerHTML = msg;
+          tooltipText.style.visibility = 'visible';
+          setTimeout(() => tooltipText.style.visibility = 'hidden', 3000);
+        }
+
+        function renderResult(res) {
+          if (!res) return '<p class="planMessage">No pairing result.</p>';
+          let productHtml = '';
+
+          if (Array.isArray(res.productMatches) && res.productMatches.length) {
+            productHtml = res.productMatches.map(p => {
+              const img = p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.title}" class="recipeimg" />` : '';
+              const buy = p.link ? `<p><a href="${p.link}" target="_blank">Buy</a></p>` : '';
+              const price = p.price ? `<p><strong>Price:</strong> ${p.price}</p>` : '';
+              const description = p.description ? `<p>${p.description}</p>` : '';
+              return `
+                <div class="foodContent" style="margin-bottom:1rem;">
+                  ${img}
+                  <div class="adittionalContent">
+                    <h4>${p.title}</h4>
+                    ${description}
+                    ${price}
+                    ${buy}
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+
+          return `
+            <div class="mainfoodcontainer">
+              <div class="foodContentboxTittle">
+                <div class="title">Wine Pairing Result</div>
+              </div>
+              <div class="adittionalContent">
+                ${res.pairingText ? `<p>${res.pairingText}</p>` : '<p>No pairing text available.</p>'}
+              </div>
+              <div class="foodContent">
+                ${productHtml || '<p>No recommended wines available.</p>'}
+              </div>
+            </div>
+          `;
+        }
+
+        async function searchHandler(e) {
+          e.preventDefault();
+          if (!foodInput.value.trim()) {
+            showError("Please enter a food, dish or cuisine.");
+            return;
+          }
+
+          contentForWine.innerHTML = '<p class="planMessage">Searching for wine pairings…</p>';
+
+          try {
+            const q         = encodeURIComponent(foodInput.value.trim());
+            const maxPrice  = priceInput.value ? `&maxPrice=${encodeURIComponent(priceInput.value)}` : '';
+            const res       = await fetch(`https://api.spoonacular.com/food/wine/pairing?food=${q}${maxPrice}&apiKey=#{apiKey}`);
+            const json      = await res.json();
+
+            if (json.status === 'failure') {
+              showError(json.message || 'No pairing found for that food.');
+              contentForWine.innerHTML = '<p class="planMessage">Find the perfect wine for your dish.</p>';
+              return;
+            }
+
+            contentForWine.innerHTML = renderResult(json);
+          } catch(err) {
+            showError("Error: " + err.message);
+          }
+        }
+
+        searchWine.addEventListener('click', searchHandler);
+      })();
+
+
