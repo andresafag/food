@@ -11,24 +11,29 @@ html(lang="en")
     style.
       #submit_section {
         max-width: 860px;
-        margin: 2.5rem auto;
-        padding: 0 1.5rem 3rem;
+        margin: 3.5rem auto; /* Slightly more room on top */
+        padding: 0 1.5rem;   /* Cleared bottom padding so footer handles it */
       }
 
       #submit_section h1 {
-        font-size: 2rem;
+        font-size: 2.25rem;
         font-weight: 700;
-        margin-bottom: 1.75rem;
+        margin: 0 0 1.5rem 0.5rem;
         color: #1a1a1a;
-        letter-spacing: -0.5px;
+        letter-spacing: 0.05em;
+        font-family: 'Pangolin', cursive;
+        text-transform: uppercase;
+        text-align: left;
+        display: block;
       }
 
       #wine-form {
         background: #fff;
         border: 1px solid #e5e7eb;
         border-radius: 14px;
-        padding: 2rem;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        padding: 1.5rem 2rem 2rem;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+        margin-top: 0;
       }
 
       .form-section-label {
@@ -37,7 +42,7 @@ html(lang="en")
         letter-spacing: 0.08em;
         text-transform: uppercase;
         color: #9ca3af;
-        margin: 1.5rem 0 0.75rem;
+        margin: 0 0 1rem 0; /* Reset top margin since it is the first item inside card */
       }
 
       .form-row {
@@ -81,22 +86,23 @@ html(lang="en")
       }
 
       #submit {
-        width: 100%;
-        padding: 0.95rem 1rem;
-        background: #f97316;
-        color: #fff;
-        font-size: 1rem;
-        font-weight: 700;
-        border: none;
-        border-radius: 9px;
+        display: block;
+        margin: 20px auto 10px;
+        text-align: center;
+        padding: 12px 30px;
+        font-size: 1.3rem;
+        font-weight: 600;
+        border: 2px solid rgb(170, 119, 17);
+        border-radius: 8px;
+        background-color: rgb(250, 250, 220);
         cursor: pointer;
-        letter-spacing: 0.02em;
-        transition: background 0.15s, transform 0.1s;
-        margin-top: 1rem;
       }
 
-      #submit:hover { background: #ea6c0a; }
-      #submit:active { transform: scale(0.98); }
+      #submit:hover {
+        border-style: solid;
+        border-width: 2px 4px 4px 1px;
+        border-color: black;
+      }
 
       .tooltiptext {
         display: block;
@@ -113,6 +119,7 @@ html(lang="en")
       .planMessage {
         font-size: 1rem;
         color: #4b5563;
+        padding-left: 0.5rem; /* Aligns description text cleanly under card */
       }
 
       .pairing-suggestion {
@@ -311,5 +318,3 @@ html(lang="en")
 
         searchWine.addEventListener('click', searchHandler);
       })();
-
-
