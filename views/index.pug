@@ -30,7 +30,7 @@ html(lang="en")
         div(id="contentForFood")
           img(alt="welcomeimg", id="imge")
     include components/footer
-script(src="./hamburgerMenu.js")     
+script(src="./hamburgerMenu.js")
 script.
   window.onload = randomp;
   var pic_rand = ["./images/merengue.jpg", "./images/pasta.jpg", "./images/smoothie.jpg"];
@@ -39,82 +39,97 @@ script.
     var randomNum = Math.floor(Math.random() * pic_rand.length);
     document.getElementById("imge").src = pic_rand[randomNum];
   }
-  let theIdArray = [], //Array of the food ids
-      imagesArray = [], //Array of the images sources                
-      footerSection = document.querySelector('.footer-section'),
-      foodInput = document.querySelector('#food'),// Get the user input 
-      contentForFood=document.querySelector('#contentForFood'), // This is where all the food information will be displayed
-      searchFood = document.querySelector('#submit'),
-      adittionalInfo=document.querySelector('.adittionalInfo'),
-      idAndImages = `https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=#{apiKey}`,
-      summary = 'https://api.spoonacular.com/recipes/654926/information?apiKey=#{apiKey}'
 
-      /* on click the request starts searching food  */
-      searchFood.addEventListener('click', function(e){
-        e.preventDefault()
-        if(foodInput.value.length == 0){
-          let tooltipEmptyField =  document.querySelector(".tooltiptext") 
-          tooltipEmptyField.innerHTML = "You didnt enter anything"
-          tooltipEmptyField.style.visibility = "visible"
-          
-          setTimeout(function(){
-            tooltipEmptyField.style.visibility = "hidden"
-          }, 3000);
-          return
+  (function(){
+    const foodInput = document.querySelector('#food'),
+          contentForFood = document.querySelector('#contentForFood'),
+          searchFood = document.querySelector('#submit'),
+          tooltipText = document.querySelector('.tooltiptext');
+
+    function nutrientFrom(respon, key){
+      if(!respon || !respon.nutrition || !respon.nutrition.nutrients) return 0;
+      const found = respon.nutrition.nutrients.find(n => n.name.toLowerCase().includes(key));
+      return found ? Math.round(found.amount) : 0;
+    }
+
+    function mealCardHTML(respon){
+      const imgSrc = respon.image || '';
+      const calories = nutrientFrom(respon, 'calories');
+      const protein = nutrientFrom(respon, 'protein');
+      const fat = nutrientFrom(respon, 'fat');
+      const carbs = nutrientFrom(respon, 'carbohydrates') || nutrientFrom(respon, 'carbs');
+      const nutrientBar = (calories||protein||fat||carbs) ? `\n        <div class="week-nutrients">\n          <span><b>Calories:</b> ${calories} kcal</span>\n          <span><b>Protein:</b> ${protein}g</span>\n          <span><b>Fat:</b> ${fat}g</span>\n          <span><b>Carbs:</b> ${carbs}g</span>\n        </div>\n      ` : '';
+
+      const imgTag = imgSrc ? `<img src="${imgSrc}" alt="${respon.title}" />` : '';
+
+      const likes = respon.aggregateLikes || 0;
+      const cheap = respon.cheap ? 'Yes' : 'No';
+      const cookingMinutes = respon.cookingMinutes || respon.preparationMinutes || '';
+      const credits = respon.creditsText || respon.sourceName || '';
+
+      const diets = Array.isArray(respon.diets) ? respon.diets : [];
+      const cuisines = Array.isArray(respon.cuisines) ? respon.cuisines : [];
+      const dishTypes = Array.isArray(respon.dishTypes) ? respon.dishTypes : [];
+
+      const tags = [...diets, ...cuisines, ...dishTypes].filter(Boolean);
+      const tagsHtml = tags.length ? `<div class="tags">${tags.map(t => `<span>${t}</span>`).join('')}</div>` : '';
+
+      const ingredients = Array.isArray(respon.extendedIngredients) ? respon.extendedIngredients.map(ing => {
+        const text = ing.original || (ing.amount ? `${ing.amount} ${ing.unit || ''} ${ing.name}` : ing.name);
+        return `<li>${text}</li>`;
+      }).join('') : '';
+
+      let instructionsHtml = '';
+      if(Array.isArray(respon.analyzedInstructions) && respon.analyzedInstructions.length){
+        const emojis = ['🍝','🍕','🥗','🍜','🥘','🍣','🌮','🍛','🍲','🥟'];
+        instructionsHtml = '<ul>' + respon.analyzedInstructions.map(instr => instr.steps.map(s => {
+          const emoji = emojis[Math.floor(Math.random()*emojis.length)];
+          return `<li>${emoji} ${s.step}</li>`;
+        }).join('')).join('') + '</ul>';
+      } else if(respon.instructions){
+        // If only plain instructions string is available, strip numeric prefixes like "1. " and show as paragraphs
+        const stripped = respon.instructions.replace(/\d+\.\s*/g, '');
+        instructionsHtml = `<div>${stripped}</div>`;
+      }
+
+      const summaryHtml = respon.summary ? `<div class="credits">${respon.summary}</div>` : '';
+
+      return `\n        ${nutrientBar}\n        <div class="meal-item-card">\n          ${imgTag}\n          <div>\n            <h2>${respon.title || ''}</h2>\n            <div class="meta">\n              <span>Ready in: ${respon.readyInMinutes || 'N/A'} min</span>\n              <span>Servings: ${respon.servings || 'N/A'}</span>\n              <span>Likes: ${likes}</span>\n              <span>Cheap: ${cheap}</span>\n            </div>\n            ${tagsHtml}\n            <div class="credits">Source: ${credits}</div>\n            ${ingredients ? `<h4>Ingredients</h4><ul class="ingredients-list">${ingredients}</ul>` : ''}\n            ${instructionsHtml ? `<h4>Instructions</h4><div class="instruction-steps">${instructionsHtml}</div>` : ''}\n            ${summaryHtml}\n          </div>\n        </div>\n      `;
+    }
+
+    async function searchHandler(e){
+      e.preventDefault();
+      if(!foodInput.value || !foodInput.value.trim()){
+        tooltipText.innerHTML = "You didnt enter anything";
+        tooltipText.style.visibility = 'visible';
+        setTimeout(()=> tooltipText.style.visibility = 'hidden', 3000);
+        return;
+      }
+
+      contentForFood.innerHTML = '<p class="planMessage">Searching…</p>';
+
+      try{
+        const q = encodeURIComponent(foodInput.value.trim());
+        const searchRes = await fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${q}&number=10&apiKey=#{apiKey}`);
+        const searchJson = await searchRes.json();
+        console.log('searchJson', searchJson);
+        if(!searchJson.results || searchJson.results.length === 0){
+          tooltipText.innerHTML = "No such food information in the database";
+          tooltipText.style.visibility = 'visible';
+          setTimeout(()=>{ tooltipText.style.visibility = 'hidden'; randomp(); }, 3000);
+          contentForFood.innerHTML = '';
+          return;
         }
-        else if (foodInput.value.length > 0){
-          //- contentForFood.textContent = ''
-          theIdArray=[]
-          imagesArray=[]
-           /* Here we start the search */
-          fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${foodInput.value}&apiKey=#{apiKey}`)
-          .then(response => {
-            return response.json()
-            })
-          .then(response =>{
-            if(response.results.length == 0){
-              let tooltipEmptyField =  document.querySelector(".tooltiptext") 
-              tooltipEmptyField.innerHTML = "No such food information in the database"
-              tooltipEmptyField.style.visibility = "visible"
-              setTimeout(function(){
-                tooltipEmptyField.style.visibility = "hidden"
-                randomp()
-              }, 3000);
-              /* If response is not successful stops the search */
-              return
-            }
-            contentForFood.textContent = ''
-            response.results.forEach(food=>{
-               /* Here we get the ids of all the results and put them on an array */
-              theIdArray.push(food.id)
-              })
-              /* Loop through id on every request */
-            for(var i = 0; i < theIdArray.length; i++){
-              fetch(`https://api.spoonacular.com/recipes/${theIdArray[i]}/information?apiKey=#{apiKey}`)
-              .then(respo => {
-                return respo.json()
-                })
-              .then(respon => {
-                  let preparation = respon.instructions.replace(/<ol>|<li>|<\/li>|<\/ol>/g, '');
-                 
-                  let htmlStructure = `<div id="mainfoodcontainer">
-                      <div class="foodContentboxTittle">
-                        <div class="title">${respon.title}</div>
-                      </div>
-                      <div class="adittionalContent">
-                        <h4>Ingredients: </h4>
-                        ${respon.extendedIngredients.map((ingredient,index)=>`<p>${index+1} ${ingredient.name}</p>`).join("")}
-                        <span class="food-time">Ready in: " + ${respon.readyInMinutes} + " minutes</span>
-                      </div>
-                      <div class="foodContent">
-                        <img class="recipeimg" src=${respon.image}>${preparation}
-                      </div>
-                                      </div>` 
 
-                  contentForFood.innerHTML += htmlStructure
+        const ids = searchJson.results.map(r => r.id);
+        const details = await Promise.all(ids.map(id => fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=#{apiKey}`).then(r=>r.json())));
+        console.log('details', details);
+        contentForFood.innerHTML = details.map(d => mealCardHTML(d)).join('');
+      }catch(err){
+        tooltipText.innerHTML = "Error: " + err.message;
+        tooltipText.style.visibility = 'visible';
+      }
+    }
 
-                })
-            }
-            })
-        }
-        })
+    searchFood.addEventListener('click', searchHandler);
+  })();
