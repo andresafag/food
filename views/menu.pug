@@ -159,10 +159,10 @@ html(lang="en")
       }
 
       .menu-item-card .menu-item-image {
-        width: 88px;
-        height: 88px;
+        width: 110px;
+        height: 110px;
         object-fit: cover;
-        border-radius: 8px;
+        border-radius: 10px;
         flex-shrink: 0;
         background: #f3f4f6;
       }
@@ -313,23 +313,19 @@ html(lang="en")
                 : null;
               const isRealImage = item.image && /^https:\/\/img\.spoonacular\.com\/menu-items\/\d+\.(png|jpg|jpeg|webp)$/.test(item.image);
               const imageHtml = isRealImage
-                ? `<img src="${item.image}" alt="${item.title || item.name}" class="recipeimg" />`
+                ? `<img src="${item.image}" alt="${item.title || item.name}" class="menu-item-image" />`
                 : '';
               const calorieBadge = calories
                 ? `<span class="food-time">Calories: ${Math.round(calories.amount)} ${calories.unit}</span>`
                 : '';
               return `
-                <div class="mainfoodcontainer">
-                  <div class="foodContentboxTittle">
-                    <div class="title">${item.title || item.name}</div>
-                  </div>
-                  <div class="adittionalContent">
+                <div class="menu-item-card">
+                  ${imageHtml}
+                  <div class="menu-item-info">
+                    <h2>${item.title || item.name}</h2>
                     <p><strong>Restaurant:</strong> ${item.restaurantChain || 'N/A'}</p>
-                    ${calorieBadge}
-                  </div>
-                  <div class="foodContent">
-                    ${imageHtml}
                     ${description}
+                    ${calorieBadge}
                   </div>
                 </div>
               `;
