@@ -8,6 +8,10 @@ html(lang="en")
     link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
     link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
     script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
+    style.
+      #send-info { text-align: center; }
+      #send-info .food-title { margin-bottom: 1rem; }
+      #send-info .food-title h2 { margin: 0; font-size: 1.8rem; font-family: 'Pangolin', cursive; color: #222; text-transform: uppercase; letter-spacing: 0.05em; }
   body  
     nav
       include components/nav.pug
@@ -16,17 +20,19 @@ html(lang="en")
         div
           form
             div(id="send-info")
+              div(class="food-title")
+                h2 Random Recipe
               input(type="submit", id="submit", value="Get Random Recipe")
               i.fa-solid.fa-dice
-              span.tooltiptext 
+              span.tooltiptext
       article 
         div(id="contentForFood")
           img(alt="welcomeimg", id="imge")
     include components/footer
-script(src="./hamburgerMenu.js")     
+script(src="./hamburgerMenu.js")
 script.
   var pic_rand = ["./images/merengue.jpg", "./images/pasta.jpg", "./images/smoothie.jpg"];
-  
+
   function randomp(){
     var randomNum = Math.floor(Math.random() * pic_rand.length);
     document.getElementById("imge").src = pic_rand[randomNum];
@@ -34,57 +40,107 @@ script.
 
   window.onload = randomp;
 
-  let contentForFood = document.querySelector('#contentForFood'),
-      searchFood = document.querySelector('#submit'),
-      randomRecipeEndpoint = `https://api.spoonacular.com/recipes/random?number=1&apiKey=#{apiKey}`;
+  const contentForFood = document.querySelector('#contentForFood'),
+        searchFood = document.querySelector('#submit'),
+        tooltipText = document.querySelector('.tooltiptext'),
+        randomRecipeEndpoint = `https://api.spoonacular.com/recipes/random?number=1&apiKey=#{apiKey}`;
+
+  function nutrientFrom(respon, key){
+    if(!respon || !respon.nutrition || !respon.nutrition.nutrients) return 0;
+    const found = respon.nutrition.nutrients.find(n => n.name.toLowerCase().includes(key));
+    return found ? Math.round(found.amount) : 0;
+  }
+
+  function mealCardHTML(respon){
+    const imgSrc = respon.image || '';
+    const calories = nutrientFrom(respon, 'calories');
+    const protein = nutrientFrom(respon, 'protein');
+    const fat = nutrientFrom(respon, 'fat');
+    const carbs = nutrientFrom(respon, 'carbohydrates') || nutrientFrom(respon, 'carbs');
+    const nutrientBar = (calories || protein || fat || carbs) ? `
+      <div class="week-nutrients">
+        <span><b>Calories:</b> ${calories} kcal</span>
+        <span><b>Protein:</b> ${protein}g</span>
+        <span><b>Fat:</b> ${fat}g</span>
+        <span><b>Carbs:</b> ${carbs}g</span>
+      </div>
+    ` : '';
+
+    const imgTag = imgSrc ? `<img src="${imgSrc}" alt="${respon.title || 'recipe'}" />` : '';
+    const likes = respon.aggregateLikes || 0;
+    const cheap = respon.cheap ? 'Yes' : 'No';
+    const credits = respon.creditsText || respon.sourceName || '';
+    const diets = Array.isArray(respon.diets) ? respon.diets : [];
+    const cuisines = Array.isArray(respon.cuisines) ? respon.cuisines : [];
+    const dishTypes = Array.isArray(respon.dishTypes) ? respon.dishTypes : [];
+    const tags = [...diets, ...cuisines, ...dishTypes].filter(Boolean);
+    const tagsHtml = tags.length ? `<div class="tags">${tags.map(t => `<span>${t}</span>`).join('')}</div>` : '';
+
+    const ingredients = Array.isArray(respon.extendedIngredients) ? respon.extendedIngredients.map(ing => {
+      const text = ing.original || (ing.amount ? `${ing.amount} ${ing.unit || ''} ${ing.name}` : ing.name);
+      return `<li>${text}</li>`;
+    }).join('') : '';
+
+    let instructionsHtml = '';
+    if(Array.isArray(respon.analyzedInstructions) && respon.analyzedInstructions.length){
+      instructionsHtml = '<ul>' + respon.analyzedInstructions.map(instr => instr.steps.map(s => `<li>${s.step}</li>`).join('')).join('') + '</ul>';
+    } else if(respon.instructions){
+      const stripped = respon.instructions.replace(/<[^>]+>/g, '').replace(/\d+\.\s*/g, '');
+      instructionsHtml = `<div>${stripped}</div>`;
+    }
+
+    const summaryHtml = respon.summary ? `<div class="credits">${respon.summary}</div>` : '';
+
+    return `
+      ${nutrientBar}
+      <div class="meal-item-card">
+        ${imgTag}
+        <div>
+          <h2>${respon.title || ''}</h2>
+          <div class="meta">
+            <span>Ready in: ${respon.readyInMinutes || 'N/A'} min</span>
+            <span>Servings: ${respon.servings || 'N/A'}</span>
+            <span>Likes: ${likes}</span>
+            <span>Cheap: ${cheap}</span>
+          </div>
+          ${tagsHtml}
+          <div class="credits">Source: ${credits}</div>
+          ${ingredients ? `<h4>Ingredients</h4><ul class="ingredients-list">${ingredients}</ul>` : ''}
+          ${instructionsHtml ? `<h4>Instructions</h4><div class="instruction-steps">${instructionsHtml}</div>` : ''}
+          ${summaryHtml}
+        </div>
+      </div>
+    `;
+  }
 
   /* on click the request starts searching for a random recipe */
   searchFood.addEventListener('click', function(e){
-    e.preventDefault()
-    contentForFood.textContent = ''
-    
-    fetch(randomRecipeEndpoint)
-    .then(response => {
-      return response.json()
-    })
-    .then(response => {
-      if(!response.recipes || response.recipes.length == 0){
-        let tooltipEmptyField = document.querySelector(".tooltiptext") 
-        tooltipEmptyField.innerHTML = "Could not fetch random recipe"
-        tooltipEmptyField.style.visibility = "visible"
-        setTimeout(function(){
-          tooltipEmptyField.style.visibility = "hidden"
-          randomp()
-        }, 3000);
-        return
-      }
+    e.preventDefault();
+    contentForFood.innerHTML = '<p class="planMessage">Searching…</p>';
 
-      let recipe = response.recipes[0];
-      let preparation = recipe.instructions ? recipe.instructions.replace(/<ol>|<li>|<\/li>|<\/ol>/g, '') : 'No instructions available';
-      
-      let htmlStructure = `<div id="mainfoodcontainer">
-          <div class="foodContentboxTittle">
-            <div class="title">${recipe.title}</div>
-          </div>
-          <div class="adittionalContent">
-            <h4>Ingredients: </h4>
-            ${recipe.extendedIngredients.map((ingredient, index) => `<p>${index + 1} ${ingredient.name}</p>`).join("")}
-            <span class="food-time">Ready in: ${recipe.readyInMinutes} minutes</span>
-          </div>
-          <div class="foodContent">
-            <img class="recipeimg" src="${recipe.image}">${preparation}
-          </div>
-        </div>`;
-      
-      contentForFood.innerHTML = htmlStructure;
-    })
-    .catch(error => {
-      let tooltipEmptyField = document.querySelector(".tooltiptext") 
-      tooltipEmptyField.innerHTML = "Error fetching recipe"
-      tooltipEmptyField.style.visibility = "visible"
-      setTimeout(function(){
-        tooltipEmptyField.style.visibility = "hidden"
-        randomp()
-      }, 3000);
-    })
-  })
+    fetch(randomRecipeEndpoint)
+      .then(response => response.json())
+      .then(response => {
+        if(!response.recipes || response.recipes.length === 0){
+          tooltipText.innerHTML = 'Could not fetch random recipe';
+          tooltipText.style.visibility = 'visible';
+          setTimeout(function(){
+            tooltipText.style.visibility = 'hidden';
+            randomp();
+          }, 3000);
+          contentForFood.innerHTML = '';
+          return;
+        }
+
+        const recipe = response.recipes[0];
+        contentForFood.innerHTML = mealCardHTML(recipe);
+      })
+      .catch(error => {
+        tooltipText.innerHTML = 'Error fetching recipe';
+        tooltipText.style.visibility = 'visible';
+        setTimeout(function(){
+          tooltipText.style.visibility = 'hidden';
+          randomp();
+        }, 3000);
+      });
+  });
