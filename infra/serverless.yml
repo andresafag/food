@@ -1,0 +1,42 @@
+service: express-pug-app
+
+frameworkVersion: '4'
+custom:
+  serverless-offline:
+    noPrependStageInUrl: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1 
+  stage: dev
+  environment:
+    API_KEY: ${env:API_KEY}
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - http:
+          path: /
+          method: any
+      - http:
+          path: '{proxy+}'
+          method: any
+
+package:
+  individually: true
+  patterns:
+    - '!**'                
+    - '../app.js'
+    - '../handler.js'
+    - '../package.json'
+    - '../node_modules/**'
+    - '../views/**'        
+    - '../public/**'       
+
+plugins:
+  - serverless-offline

@@ -1,98 +1,210 @@
 # Hi food lovers 👋
 
-![Foodmania Logo](https://github.com/andresafag/food/blob/master/public/images/foodmania_logo.png "Logo")
+![Foodmania Logo](https://github.com/andresafag/food/blob/master/public/images/foodmania_logo.png "Foodmania Logo")
 
-## Foodmania: An Immersive Culinary Experience
+# 🍽️ Foodmania: An Immersive Culinary Experience
 
-Have you ever wondered what ingredients to use or how long it takes to cook certain dishes? My wife has, so I decided to create a website to showcase exactly that along with cooking techniques and more.
+Have you ever wondered what ingredients to use or how long it takes to cook certain dishes? My wife certainly has, so I decided to build **Foodmania**—a web application that helps users discover recipes, cooking techniques, ingredients, and fascinating food facts in one place.
 
-## Project Overview
+---
 
-FoodMania demonstrates modern backend development practices through:
+# 🚀 Live Demo
 
-REST API integration with Spoonacular
-Dynamic server-side rendering using Pug
-MongoDB data persistence with Mongoose
-Express.js routing and middleware
-Environment-based configuration management
-CI/CD automation with GitHub Actions
+The application is deployed entirely using a **fully serverless architecture**.
 
-The platform allows users to search for recipes, discover cooking techniques, and explore culinary information through a centralized web application.
+🔗 **Live Application:**  
+https://akn9xyam4d.execute-api.us-east-1.amazonaws.com/dev/
 
-## Usage
+---
 
-This project is divided into 3 sections as described below:
+# 📖 Project Overview
 
-1. **Index**   
-   The main/index page is where all the magic happens. As soon as you type the dish or keyword you want information for and click on the Yummy button, you will see the recipes shown.
+Foodmania showcases modern backend engineering and cloud architecture through:
 
-2. **Food Facts**   
-   Here, your mind will be blown away by some interesting food facts you probably didn't know or haven't heard about before.
+- **Serverless Architecture** — Event-driven execution powered by AWS Lambda and Amazon API Gateway.
+- **REST API Integration** — Fast recipe retrieval using the Spoonacular API.
+- **Server-Side Rendering (SSR)** — Dynamic HTML rendering with Pug templates.
+- **Infrastructure as Code (IaC)** — Fully managed using Serverless Framework v4.
+- **Express.js Routing** — Modular Express application adapted for Lambda execution.
+- **Environment Configuration** — Secure secret management with dotenv and AWS environment variables.
 
-3. **Cooking Techniques**   
-   There's nothing that saves more time than the know-how or techniques passed along by other people in our society. Why reinvent the wheel if somebody else has already come up with that knowledge?
+The platform allows users to search recipes, discover cooking techniques, and learn culinary facts through a centralized, scalable web application.
 
-## 🏗️ System Architecture
+---
 
+# ✨ Usage
 
+The application is divided into three primary sections.
+
+## 1. Recipe Search
+
+The landing page is where everything begins.
+
+Simply type the name of a dish or ingredient, click the **Yummy** button, and Foodmania retrieves matching recipes along with detailed information.
+
+---
+
+## 2. Food Facts
+
+Learn surprising facts about foods from around the world.
+
+Randomized culinary trivia keeps the experience educational and entertaining.
+
+---
+
+## 3. Cooking Techniques
+
+Master useful cooking methods and best practices shared by experienced chefs and home cooks.
+
+Learning proven techniques saves time and improves cooking results.
+
+---
+
+# 🏗️ System Architecture
+
+Foodmania has been migrated from a traditional stateful Express server into a fully serverless, event-driven architecture.
 
 ```mermaid
-graph LR
+graph TD
 
-Client[Client Browser]
+Client[Client Browser] -->|HTTP Request| APIGateway[Amazon API Gateway]
 
-Express[Express Server]
+APIGateway -->|Triggers| Lambda[AWS Lambda]
 
-Views[Pug Views]
+subgraph Lambda Runtime
+    Lambda --> Handler[handler.js]
+    Handler --> Express[Express Application]
 
-API[Spoonacular API]
+    Express --> Views[Pug Templates]
+    Express --> Static[Static Assets]
+end
 
-Client --> Express
-
-Express --> API
-
-Express --> Views
+Express --> Spoonacular[Spoonacular API]
 
 Views --> Client
+Static --> Client
 ```
 
+---
 
+# 📁 Repository Structure
 
-## ✨ Features
-Recipe Discovery
-Search recipes by keyword
-Retrieve detailed recipe information
-Display ingredients and preparation instructions
-Access cooking duration and nutritional data
-Cooking Techniques
-Explore culinary methods
-Learn food preparation best practices
-Improve cooking knowledge
-Food Facts
-Dynamic food trivia
-Educational culinary content
-Randomized fact generation
+```text
+food/
+├── public/                 # Static assets (CSS, JavaScript, Images)
+├── views/                  # Pug templates
+├── app.js                  # Express application
+├── handler.js              # Lambda entry point (@vendia/serverless-express)
+├── package.json            # Dependencies & scripts
+└── infra/
+    └── serverless.yml      # Infrastructure as Code
+```
 
-## Technologies
+---
 
-| Layer             | Technologies          |
-| ----------------- | --------------------- |
-| Frontend          | HTML, CSS, JavaScript |
-| Rendering         | Pug                   |
-| Backend           | Node.js, Express.js   |
-| External Services | Spoonacular API       |
-| CI/CD             | GitHub Actions        |
-| Version Control   | Git                   |
+# ✨ Features
 
+## 🍕 Recipe Discovery
 
-## 🎯 Skills Demonstrated
-Backend Development
-RESTful API Consumption
-Database Modeling
-Express Middleware
-Server-Side Rendering
-CI/CD Pipelines
-Environment Configuration
-Full-Stack JavaScript
-Software Architecture
-MVC Design Patterns
+- Search recipes by keyword
+- Browse recipe details
+- View ingredients
+- Read preparation instructions
+- Cooking time information
+- Nutritional data
+
+---
+
+## 👨‍🍳 Cooking Techniques
+
+- Learn professional cooking methods
+- Discover preparation best practices
+- Improve culinary knowledge
+
+---
+
+## 🥗 Food Facts
+
+- Random food trivia
+- Educational culinary content
+- Dynamic fact generation
+
+---
+
+# 💻 Technology Stack
+
+| Layer | Technologies |
+|--------|--------------|
+| **Frontend** | HTML5, CSS3, JavaScript (ES6+) |
+| **Template Engine** | Pug |
+| **Backend** | Node.js, Express.js |
+| **Cloud** | AWS Lambda, API Gateway, CloudWatch |
+| **Deployment** | Serverless Framework v4 |
+| **Configuration** | dotenv-cli |
+| **External API** | Spoonacular API |
+| **Version Control** | Git & GitHub |
+
+---
+
+# 🎯 Skills Demonstrated
+
+### ☁️ Cloud Architecture & DevOps
+
+- Migration of a traditional Express application into a cloud-native serverless solution.
+- AWS Lambda event-driven execution.
+- Zero-cost deployment under the AWS Free Tier.
+- Infrastructure as Code using Serverless Framework.
+
+---
+
+### ⚙️ Backend Engineering
+
+- Modular Express routing.
+- Reusable middleware.
+- Framework-agnostic application structure.
+- REST API consumption.
+- Server-side rendering with Pug.
+
+---
+
+### 🚀 Serverless Asset Management
+
+- Binary media type configuration in API Gateway.
+- Static asset delivery from Lambda packages.
+- Base64 streaming support.
+- Optimized cold-start behavior.
+
+---
+
+### 🔒 Secure Environment Management
+
+- Runtime environment variable injection.
+- API key isolation.
+- dotenv integration.
+- Secrets excluded from version control.
+
+---
+
+# 📚 What You'll Learn
+
+This project demonstrates practical knowledge of:
+
+- Serverless Computing
+- AWS Lambda
+- Amazon API Gateway
+- Express.js
+- Node.js
+- REST API Integration
+- Infrastructure as Code
+- Cloud Deployment
+- Server-Side Rendering
+- Pug Templates
+- Environment Configuration
+- Modern Backend Development
+
+---
+
+# 📄 License
+
+This project is intended for educational purposes and serves as a demonstration of modern serverless web application architecture.
+
