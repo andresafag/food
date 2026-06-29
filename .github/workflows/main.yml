@@ -1,13 +1,81 @@
-name: Repository Dispatch Trigger de unaaaa
+name: Foodmania Secure CI/CD (OIDC)
+
 on:
-  pull_request_target
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+# 🔑 CRUCIAL FOR OIDC: Allows GitHub Actions request JWTs from AWS
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
-  run-on-clone:
+  continuous-integration:
+    name: Build & Validate Application
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Run your custom script
-      env: 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: echo "This workflow was triggered by a clone event"
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Cache Node Modules (CI)
+        id: node-modules-cache-ci
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        if: steps.node-modules-cache-ci.outputs.cache-hit != 'true'
+        run: npm ci
+
+
+  continuous-deployment:
+    name: Deploy to AWS Lambda via OIDC
+    needs: continuous-integration
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install Project Dependencies
+        run: npm ci
+
+      - name: Install Serverless Framework CLI
+        run: npm install -g serverless
+
+      # 🔐 AUTENTICACIÓN SEGURA MEDIANTE OIDC
+      - name: Configure AWS Credentials via IAM OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
+
+      # Genera dinámicamente el .env temporal para dotenv-cli
+      - name: Inject Secrets into Environment File
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" > .env
+
+      # Despliegue modular desde la subcarpeta /infra
+      - name: Deploy to AWS Cloud
+        run: |
+          cd infra
+          npx dotenv -e ../.env -- serverless deploy
