@@ -4,207 +4,126 @@
 
 # 🍽️ Foodmania: An Immersive Culinary Experience
 
-Have you ever wondered what ingredients to use or how long it takes to cook certain dishes? My wife certainly has, so I decided to build **Foodmania**—a web application that helps users discover recipes, cooking techniques, ingredients, and fascinating food facts in one place.
+Have you ever wondered what ingredients to use or how long it takes to cook certain dishes? My wife certainly has, so I decided to build **Foodmania**—a production-grade serverless web application that helps users discover recipes, cooking techniques, ingredients, and fascinating food facts in one place.
 
 ---
 
 # 🚀 Live Demo
 
-The application is deployed entirely using a **fully serverless architecture**.
+The application is deployed entirely using an enterprise-ready, **fully serverless architecture** operating at 100%
 
-🔗 **Live Application:**  
-https://akn9xyam4d.execute-api.us-east-1.amazonaws.com/dev/
+🔗 **Live Application URL:** [https://akn9xyam4d.execute-api.us-east-1.amazonaws.com/dev/](https://akn9xyam4d.execute-api.us-east-1.amazonaws.com/dev/)
 
 ---
 
 # 📖 Project Overview
 
-Foodmania showcases modern backend engineering and cloud architecture through:
+Foodmania showcases modern cloud engineering, secure DevOps automation, and scalable backend practices through:
 
-- **Serverless Architecture** — Event-driven execution powered by AWS Lambda and Amazon API Gateway.
-- **REST API Integration** — Fast recipe retrieval using the Spoonacular API.
-- **Server-Side Rendering (SSR)** — Dynamic HTML rendering with Pug templates.
-- **Infrastructure as Code (IaC)** — Fully managed using Serverless Framework v4.
-- **Express.js Routing** — Modular Express application adapted for Lambda execution.
-- **Environment Configuration** — Secure secret management with dotenv and AWS environment variables.
-
-The platform allows users to search recipes, discover cooking techniques, and learn culinary facts through a centralized, scalable web application.
+* **Serverless Paradigm:** Event-driven computing powered by AWS Lambda and Amazon API Gateway to achieve zero-cost idle times and instant scaling.
+* **GitOps CI/CD Automation:** Fully automated testing and deployment pipeline using GitHub Actions, utilizing short-lived cryptographic tokens via **AWS IAM OIDC Federation** (eliminating the need for permanent AWS Access Keys).
+* **Infrastructure as Code (IaC):** Complete infrastructure provisioning, asset streaming, and environment hooks defined declaratively via **Serverless Framework v4**.
+* **State & Configuration Orchestration:** Centralized backend tracking utilizing **AWS Systems Manager (SSM) Parameter Store** to handle global state mapping seamlessly across continuous deployments.
+* **Dynamic Server-Side Rendering (SSR):** Ephemeral HTML compilation using Node.js 20.x, Express.js custom middleware, and Pug templating engines.
 
 ---
 
 # ✨ Usage
 
-The application is divided into three primary sections.
+The application decouples its business capabilities into three functional culinary modules:
 
-## 1. Recipe Search
+### 1. Recipe Search
+The main web view connects to the Spoonacular REST API. Users input any target dish or ingredient payload, and the backend orchestrates data validation to output structured, clean metadata cards.
 
-The landing page is where everything begins.
+### 2. Meal Planner
+A planning interface that assembles chosen recipes into a weekly menu, generates ingredient checklists, and previews meal schedules.
 
-Simply type the name of a dish or ingredient, click the **Yummy** button, and Foodmania retrieves matching recipes along with detailed information.
-
----
-
-## 2. Food Facts
-
-Learn surprising facts about foods from around the world.
-
-Randomized culinary trivia keeps the experience educational and entertaining.
+### 3. Wine Pairing
+Renders the wine-pairing to display recommendations on wines for dishes, tasting notes, pairing rationale, and serving suggestions.
 
 ---
 
-## 3. Cooking Techniques
+# 🏗️ Cloud & Deployment Architectures
 
-Master useful cooking methods and best practices shared by experienced chefs and home cooks.
-
-Learning proven techniques saves time and improves cooking results.
-
----
-
-# 🏗️ System Architecture
-
-Foodmania has been migrated from a traditional stateful Express server into a fully serverless, event-driven architecture.
+### Runtime Infrastructure Architecture
+The system has been completely decoupled from traditional stateful server constraints into an ephemeral serverless runtime. Static files (CSS/JS) and media configurations are packaged and streamed over base64 protocols through AWS API Gateway directly from the Lambda package.
 
 ```mermaid
 graph TD
-
-Client[Client Browser] -->|HTTP Request| APIGateway[Amazon API Gateway]
-
-APIGateway -->|Triggers| Lambda[AWS Lambda]
-
-subgraph Lambda Runtime
-    Lambda --> Handler[handler.js]
-    Handler --> Express[Express Application]
-
-    Express --> Views[Pug Templates]
-    Express --> Static[Static Assets]
-end
-
-Express --> Spoonacular[Spoonacular API]
-
-Views --> Client
-Static --> Client
+    Client[Client Browser] -->|HTTPS Request| APIGateway[Amazon API Gateway]
+    APIGateway -->|Triggers Context| Lambda[AWS Lambda Function Node 20.x]
+    
+    subgraph "AWS Lambda Runtime (/var/task)"
+        Lambda -->|"Event Bridge"| Handler["handler.js / @vendia/serverless-express"]
+        Handler -->|"Routes Request"| Express[Express App Instance]
+        Express -->|"Compiles"| Views[Pug Templates Engine]
+        Express -->|"Packages"| Static[Static Assets Base64 Stream]
+    end
+    
+    Express -->|"REST Outbound"| Spoonacular[Spoonacular External API]
+    Views -->|"Compiled HTML Response"| Client
+    Static -->|"Optimized Static Stream"| Client
 ```
 
----
-
-# 📁 Repository Structure
-
-```text
+```markdown
 food/
-├── public/                 # Static assets (CSS, JavaScript, Images)
-├── views/                  # Pug templates
-├── app.js                  # Express application
-├── handler.js              # Lambda entry point (@vendia/serverless-express)
-├── package.json            # Dependencies & scripts
-└── infra/
-    └── serverless.yml      # Infrastructure as Code
+├── public/                 # Static assets (CSS, client-side JS, layout assets)
+├── views/                  # Pug presentation tier layouts
+├── app.js                  # Pure, framework-agnostic Express routing configurations
+├── handler.js              # Ephemeral adapter layer for AWS Lambda interface execution
+├── package.json            # Global production and development dependencies metadata
+└── infra/                  # Dedicated infrastructure automation module
+    └── serverless.yml      # Declarative Infrastructure as Code blueprint (Serverless v4)
 ```
 
----
+# ✨ Core Features
 
-# ✨ Features
+### 🍕 Recipe Engine
+* Asynchronous search filtering via query parameter tracking.
+* Comprehensive component rendering: ingredient weights, precise cook times, preparation walkthrough steps, and exact macro-nutritional calculations.
 
-## 🍕 Recipe Discovery
+### 👨‍🍳 Cooking Library
+* Structural layout grids showcasing curated culinary blueprints.
+* Performance optimized asset delivery to minimize cold-starts on multi-route requests.
 
-- Search recipes by keyword
-- Browse recipe details
-- View ingredients
-- Read preparation instructions
-- Cooking time information
-- Nutritional data
+### 🥗 Culinary Trivia
+* Data payload processing returning isolated, readable facts on every lifecycle request.
 
----
-
-## 👨‍🍳 Cooking Techniques
-
-- Learn professional cooking methods
-- Discover preparation best practices
-- Improve culinary knowledge
+### 📅 Menu Planning
+* Interactive weekly meal schedule builder with drag-and-drop recipe assignments.
+* Automated ingredient aggregation and shopping list generation across selected meals.
+* Nutritional breakdown summaries and dietary preference filtering.
 
 ---
 
-## 🥗 Food Facts
+# 💻 Enterprise Technology Stack
 
-- Random food trivia
-- Educational culinary content
-- Dynamic fact generation
-
----
-
-# 💻 Technology Stack
-
-| Layer | Technologies |
-|--------|--------------|
-| **Frontend** | HTML5, CSS3, JavaScript (ES6+) |
-| **Template Engine** | Pug |
-| **Backend** | Node.js, Express.js |
-| **Cloud** | AWS Lambda, API Gateway, CloudWatch |
-| **Deployment** | Serverless Framework v4 |
-| **Configuration** | dotenv-cli |
-| **External API** | Spoonacular API |
-| **Version Control** | Git & GitHub |
+| Layer | Component | Description |
+| :--- | :--- | :--- |
+| **Frontend** | HTML5, CSS3, JS (ES6+) | Modern, lightweight document layout structures. |
+| **Template Engine** | Pug | High performance HTML shorthand syntax compiler. |
+| **Application Runtime**| Node.js 20.x / Express.js | Microservice backend container baseline. |
+| **Cloud Computing** | AWS Lambda | Ephemeral computing platform for zero-maintenance scaling. |
+| **API Proxy** | Amazon API Gateway | Public proxy interface mapping routes to Serverless handlers. |
+| **Telemetry** | AWS CloudWatch Logs | Real-time diagnostics, system trace tracking, and monitoring. |
+| **State Orchestration**| AWS SSM Parameter Store | Configuration state repository for global S3 deployment mappings. |
+| **CI/CD / IaC** | Serverless v4 & GitHub Actions | Infrastructure as Code provisioning paired with an OIDC pipeline. |
 
 ---
 
-# 🎯 Skills Demonstrated
+# 🎯 DevOps & Software Engineering Mastery
 
-### ☁️ Cloud Architecture & DevOps
+### Cloud Automation & GitOps
+* **Secure Cloud Handshakes:** Complete mitigation of permanent access key risk profiles through OpenID Connect integrations with IAM trusted policies.
+* **Dependency Cache Mapping:** Optimizing GitHub runner execution loops via `actions/cache@v4` routines attached to lockfile hashes, reducing overall delivery overhead.
+* **State Externalization:** Leveraging automated platform locks via AWS SSM to securely abstract artifact locations.
 
-- Migration of a traditional Express application into a cloud-native serverless solution.
-- AWS Lambda event-driven execution.
-- Zero-cost deployment under the AWS Free Tier.
-- Infrastructure as Code using Serverless Framework.
-
----
-
-### ⚙️ Backend Engineering
-
-- Modular Express routing.
-- Reusable middleware.
-- Framework-agnostic application structure.
-- REST API consumption.
-- Server-side rendering with Pug.
-
----
-
-### 🚀 Serverless Asset Management
-
-- Binary media type configuration in API Gateway.
-- Static asset delivery from Lambda packages.
-- Base64 streaming support.
-- Optimized cold-start behavior.
-
----
-
-### 🔒 Secure Environment Management
-
-- Runtime environment variable injection.
-- API key isolation.
-- dotenv integration.
-- Secrets excluded from version control.
-
----
-
-# 📚 What You'll Learn
-
-This project demonstrates practical knowledge of:
-
-- Serverless Computing
-- AWS Lambda
-- Amazon API Gateway
-- Express.js
-- Node.js
-- REST API Integration
-- Infrastructure as Code
-- Cloud Deployment
-- Server-Side Rendering
-- Pug Templates
-- Environment Configuration
-- Modern Backend Development
+### Production Backend Engineering
+* **Serverless Express Wrappers:** Translating REST requests effortlessly into standard Lambda execution payloads using `@vendia/serverless-express`.
+* **Robust Configuration Encapsulation:** Strict environment variables sanitization using robust `dotenv-cli` injectors, blocking local keys from leaking into target codebases.
 
 ---
 
 # 📄 License
 
-This project is intended for educational purposes and serves as a demonstration of modern serverless web application architecture.
-
+This project is created exclusively for educational purposes and architectural validation runs, serving as an open-source demonstration of lean, modern serverless development.
