@@ -47,15 +47,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check Variable Presence
-        run: |
-          if [ -z "${{ secrets.AWS_ROLE_TO_ASSUME }}" ]; then
-            echo "❌ El secreto AWS_ROLE_TO_ASSUME está vacío o no se puede leer."
-            exit 1
-          else
-            echo "✅ El secreto contiene caracteres y está listo."
-          fi
-
       - name: Checkout Code
         uses: actions/checkout@v4
 

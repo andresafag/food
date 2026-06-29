@@ -1,4 +1,5 @@
 org: andresafag
+app: my-app
 service: express-pug-app
 
 frameworkVersion: '4'
