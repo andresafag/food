@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/andresafag/food#readme",
   "devDependencies": {
+    "cypress": "^15.19.0",
     "dotenv-cli": "^11.0.0",
     "serverless-http": "^4.0.0",
     "serverless-offline": "^14.7.4"
