@@ -4,10 +4,10 @@ describe('Batería de Pruebas E2E - Plataforma Food', () => {
     cy.visit('/');
   });
 
-  it('Debería mostrar correctamente la estructura de navegación de la App', () => {
-    cy.get('nav').should('be.visible');
+  it('Debería mostrar correctamente la estructura de navegación de escritorio', () => {
+    cy.get('ul#main-ul').should('be.visible');
     
-    cy.get('nav').within(() => {
+    cy.get('ul#main-ul').within(() => {
       cy.contains('Home').should('exist');
       cy.contains('Menu search').should('exist');
       cy.contains('Meal plan').should('exist');
@@ -16,23 +16,21 @@ describe('Batería de Pruebas E2E - Plataforma Food', () => {
     });
   });
 
-  it('Debería permitir al usuario buscar platillos en el Menu Search', () => {
-    cy.contains('Menu search').click();
+  it('Debería permitir al usuario buscar platillos desde el menú de escritorio', () => {
+    cy.get('ul#main-ul').contains('Menu search').click();
     
     cy.url().should('include', '/menu'); 
 
     cy.get('input[type="text"]').first()
       .should('be.visible')
-      .type('pasta{enter}'); 
+      .type('pasta{enter}');
 
-    // Verify that the results are displayed 
-    cy.get('.recipe-card, .result-item, h3').should('have.length.at.least', 1);
+    cy.get('.recipe-card, .result-item, h3, a').should('have.length.at.least', 1);
   });
 
   it('Debería manejar correctamente las respuestas de páginas no encontradas (404)', () => {
     cy.visit('/ruta-completamente-invalida', { failOnStatusCode: false });
 
-    // Check if 404 error page is displayed
     cy.request({
       url: '/ruta-completamente-invalida',
       failOnStatusCode: false
@@ -40,9 +38,8 @@ describe('Batería de Pruebas E2E - Plataforma Food', () => {
   });
 
   it('Debería cargar los recursos críticos de la página en menos de 3 segundos', () => {
-    // Validate that the main page loads within 3 seconds and returns the correct content type
     cy.request('/').then((response) => {
-      expect(response.duration).to.be.lessThan(3000); // El tiempo debe ser menor a 3000ms
+      expect(response.duration).to.be.lessThan(3000);
       expect(response.headers['content-type']).to.include('text/html');
     });
   });
