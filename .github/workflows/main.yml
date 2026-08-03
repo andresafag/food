@@ -33,10 +33,31 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
+      
+      # clean install if cache is not hit
       - name: Install Dependencies
         if: steps.node-modules-cache-ci.outputs.cache-hit != 'true'
         run: npm ci
+      
+      # Run Cypress tests with build and start commands
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3000'
+
+
+      # Upload Cypress Artifacts on Failure
+      - name: Upload Cypress Artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-error-snapshots
+          path: |
+            cypress/screenshots
+            cypress/videos
+          retention-days: 7
 
 
   continuous-deployment:
