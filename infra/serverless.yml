@@ -17,6 +17,7 @@ provider:
     AWS_LAMBDA_EXEC_WRAPPER: /opt/otel-instrument
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://44.210.111.254:4317"
     OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+    OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
 
   apiGateway:
     binaryMediaTypes:
