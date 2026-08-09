@@ -14,23 +14,16 @@ provider:
   stage: dev
   environment:
     API_KEY: ${env:API_KEY}
-    AWS_LAMBDA_EXEC_WRAPPER: /opt/otel-instrument
-    OTEL_AWS_APPLICATION_SIGNALS_ENABLED: "false"
-# Endpoint base donde Prometheus escucha OTLP
-    OTEL_EXPORTER_OTLP_ENDPOINT: "http://44.210.111.254:9090"
+
+    # OTel — self-managed SDK, no ADOT layer needed
+    # Full signal-specific path required for Prometheus OTLP ingestion
+    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://44.210.111.254:9090/api/v1/otlp/v1/metrics"
     OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
-
-    # Habilitar métricas
     OTEL_METRICS_EXPORTER: "otlp"
-    
-    # Deshabilitar logs y trazas explícitamente para evitar buscar exportadores faltantes
-    OTEL_LOGS_EXPORTER: "none"
-    OTEL_TRACES_EXPORTER: "none"
-
-    # Configuración de tiempos
     OTEL_METRIC_EXPORT_INTERVAL: "5000"
     OTEL_METRIC_EXPORT_TIMEOUT: "3000"
     OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "DELTA"
+    OTEL_SERVICE_NAME: "foodmania-api"
 
   apiGateway:
     binaryMediaTypes:
@@ -46,8 +39,7 @@ functions:
       - http:
           path: '{proxy+}'
           method: any
-    layers:
-      - arn:aws:lambda:us-east-1:615299751070:layer:AWSOpenTelemetryDistroJs:1
+    # No layers — ADOT layer removed; OTel SDK is bundled in node_modules
 
 package:
   individually: true
@@ -59,4 +51,3 @@ package:
     - '../node_modules/**'
     - '../views/**'        
     - '../public/**'       
-
