@@ -15,7 +15,7 @@ provider:
   environment:
     API_KEY: ${env:API_KEY}
     AWS_LAMBDA_EXEC_WRAPPER: /opt/otel-instrument
-    OTEL_EXPORTER_OTLP_ENDPOINT: "http://44.210.111.254:9090"
+    OTEL_EXPORTER_OTLP_ENDPOINT: "http://44.210.111.254:19090"
     OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
 
   apiGateway:
@@ -33,7 +33,7 @@ functions:
           path: '{proxy+}'
           method: any
     layers:
-      - arn:aws:lambda:us-east-1:615299751070:layer:AWSOpenTelemetryDistroJs:15    
+      - arn:aws:lambda:us-east-1:615299751070:layer:AWSOpenTelemetryDistroJs:15
 
 package:
   individually: true
