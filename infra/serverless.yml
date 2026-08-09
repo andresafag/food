@@ -15,6 +15,7 @@ provider:
   environment:
     API_KEY: ${env:API_KEY}
     AWS_LAMBDA_EXEC_WRAPPER: /opt/otel-instrument
+    OTEL_AWS_APPLICATION_SIGNALS_ENABLED: "false"
 # Endpoint base donde Prometheus escucha OTLP
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://44.210.111.254:9090"
     OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
