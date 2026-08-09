@@ -61,6 +61,8 @@ graph TD
     end
     
     Express -->|"REST Outbound"| Spoonacular[Spoonacular External API]
+    Express -->|"Exports OTLP"| OTEL[OpenTelemetry Collector]
+    OTEL -->|"Forward OTLP"| Observability[OTLP / Tracing Backend]
     Views -->|"Compiled HTML Response"| Client
     Static -->|"Optimized Static Stream"| Client
 ```
@@ -105,7 +107,7 @@ food/
 | **Application Runtime**| Node.js 20.x / Express.js | Microservice backend container baseline. |
 | **Cloud Computing** | AWS Lambda | Ephemeral computing platform for zero-maintenance scaling. |
 | **API Proxy** | Amazon API Gateway | Public proxy interface mapping routes to Serverless handlers. |
-| **Telemetry** | AWS CloudWatch Logs | Real-time diagnostics, system trace tracking, and monitoring. |
+| **Telemetry** | OpenTelemetry + AWS CloudWatch | Distributed tracing and metrics via OpenTelemetry SDK & Collector, with exporters to CloudWatch and OTLP-compatible backends. |
 | **State Orchestration**| AWS SSM Parameter Store | Configuration state repository for global S3 deployment mappings. |
 | **CI/CD / IaC** | Serverless v4 & GitHub Actions | Infrastructure as Code provisioning paired with an OIDC pipeline. |
 
@@ -123,6 +125,69 @@ food/
 * **Robust Configuration Encapsulation:** Strict environment variables sanitization using robust `dotenv-cli` injectors, blocking local keys from leaking into target codebases.
 
 ---
+
+# **OpenTelemetry (Tracing & Metrics)**
+
+This project is now instrumented with OpenTelemetry to provide distributed tracing and metrics across the serverless runtime and downstream API calls.
+
+- **What it does:** Collects spans for HTTP requests, Lambda executions, and outbound API calls (e.g., Spoonacular), and exports them to an OTLP endpoint or AWS CloudWatch/CloudWatch Agent via an OpenTelemetry Collector.
+- **Benefits:** Visualize end-to-end request flow, identify latency hotspots, and correlate logs with traces.
+
+**Quick setup (local development)**
+
+- **Install runtime instrumentation:**
+
+```bash
+npm install --save @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-collector-grpc
+```
+
+- **Environment variables (example):**
+
+```bash
+export OTEL_SERVICE_NAME=foodmania
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://44.210.111.254:9090
+```
+
+**Basic verification**
+
+- Ensure your OTLP backend is running, run the app, then trigger a few requests through the UI or `curl` and check the backend UI for spans/metrics.
+
+**CI / Production considerations**
+
+- Sampling: configure your tracer or collector sampling settings to control sample rate in production.
+- Exporter endpoints: configure the Collector in AWS (ECS / EC2) or use a managed OTLP endpoint; you can also use AWS Distro for OpenTelemetry (ADOT) to forward to CloudWatch.
+- Secure exporter endpoints and credentials via environment variables and AWS SSM Parameter Store.
+
+**Diagrams: Tracing & Telemetry Flow**
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant API as API Gateway
+    participant Lambda
+    participant App as Express App
+    participant OTEL as OpenTelemetry Collector
+    participant Backend as Tracing Backend
+
+    Browser->>API: HTTPS request
+    API->>Lambda: Trigger
+    Lambda->>App: Invoke handler
+    App->>App: Create trace/span (HTTP handler)
+    App->>App: Create span (outbound Spoonacular)
+    App->>OTEL: Export spans (OTLP)
+    OTEL->>Backend: Forward to backend (CloudWatch / OTLP receiver)
+    Backend-->>Browser: Observability UI (trace view)
+```
+
+```mermaid
+graph LR
+    A[Foodmania App (Lambda)] -->|OTLP| C[OpenTelemetry Collector]
+    C -->|Export| D[CloudWatch / OTLP Backend]
+    C -->|Export| E[Third-party APM]
+    A -->|Logs| B[CloudWatch Logs]
+    D --> F[Trace Viewer]
+```
+
 
 # 📄 License
 

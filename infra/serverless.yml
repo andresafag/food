@@ -22,7 +22,7 @@ provider:
     OTEL_METRICS_EXPORTER: "otlp"
     OTEL_METRIC_EXPORT_INTERVAL: "5000"
     OTEL_METRIC_EXPORT_TIMEOUT: "3000"
-    OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "DELTA"
+    OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "CUMULATIVE"
     OTEL_SERVICE_NAME: "foodmania-api"
 
   apiGateway:
@@ -39,7 +39,7 @@ functions:
       - http:
           path: '{proxy+}'
           method: any
-    # No layers — ADOT layer removed; OTel SDK is bundled in node_modules
+
 
 package:
   individually: true
