@@ -181,11 +181,18 @@ sequenceDiagram
 
 ```mermaid
 graph LR
-    A[Foodmania App (Lambda)] -->|OTLP| C[OpenTelemetry Collector]
-    C -->|Export| D[CloudWatch / OTLP Backend]
-    C -->|Export| E[Third-party APM]
-    A -->|Logs| B[CloudWatch Logs]
-    D --> F[Trace Viewer]
+    A[Foodmania App - Lambda]
+    C[OpenTelemetry Collector]
+    D[CloudWatch / OTLP Backend]
+    E[Third-party APM]
+    B[CloudWatch Logs]
+    F[Trace Viewer]
+
+    A --> C
+    C --> D
+    C --> E
+    A --> B
+    D --> F
 ```
 
 
