@@ -31,3 +31,12 @@ module.exports.handler = async (event, context) => {
 
   return response;
 };
+
+const http = require('http');
+
+// Test directo de conectividad de red al arrancar el contenedor
+http.get('http://44.210.111.254:9090/metrics', (res) => {
+  console.log('CONECTIVIDAD EC2 OK - Status Code:', res.statusCode);
+}).on('error', (e) => {
+  console.error('ERROR CONECTIVIDAD EC2:', e.message);
+});
