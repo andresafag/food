@@ -15,14 +15,17 @@ provider:
   environment:
     API_KEY: ${env:API_KEY}
     AWS_LAMBDA_EXEC_WRAPPER: /opt/otel-instrument
-# Endpoint explícito para métricas en el receptor OTLP de Prometheus
-    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://44.210.111.254:9090/api/v1/otlp/v1/metrics"
-    OTEL_EXPORTER_OTLP_METRICS_PROTOCOL: "http/protobuf"
-    OTEL_METRICS_EXPORTER: "otlp"
+    OTEL_EXPORTER_OTLP_ENDPOINT: "http://44.210.111.254:9090"
+    OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
     
-    # Desactiva rastros y logs para evitar chocarse con el puerto 9090
-    OTEL_TRACES_EXPORTER: "none"
-    OTEL_LOGS_EXPORTER: "none"
+    # Ambos en otlp para activar el SDK
+    OTEL_METRICS_EXPORTER: "otlp"
+    OTEL_TRACES_EXPORTER: "otlp"
+    
+    # Ajuste de tiempos para evitar el error de clamping
+    OTEL_METRIC_EXPORT_INTERVAL: "5000"
+    OTEL_METRIC_EXPORT_TIMEOUT: "3000"
+    OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "DELTA"
 
     # Reducción de tiempo de flush para entornos Serverless
     OTEL_METRIC_EXPORT_INTERVAL: "1000"
