@@ -16,9 +16,10 @@ provider:
     API_KEY: ${env:API_KEY}
     AWS_LAMBDA_EXEC_WRAPPER: /opt/otel-instrument
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://44.210.111.254:9090"
+    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://44.210.111.254:9090/api/v1/otlp/v1/metrics"
     OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
     OTEL_METRICS_EXPORTER: "otlp"
-    OTEL_TRACES_EXPORTER: "none"
+    OTEL_TRACES_EXPORTER: "otlp"
 
   apiGateway:
     binaryMediaTypes:
