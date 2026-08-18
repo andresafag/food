@@ -2,7 +2,7 @@ org: andresafag
 app: my-app
 service: express-pug-app
 
-frameworkVersion: '4'
+
 custom:
   serverless-offline:
     noPrependStageInUrl: true
@@ -12,6 +12,20 @@ provider:
   runtime: nodejs20.x
   region: us-east-1 
   stage: dev
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+        - X-Amz-Date
+        - Authorization
+        - X-Api-Key
+        - X-Amz-Security-Token
+        - X-Amz-User-Agent
+      allowedMethods:
+        - GET
+        - POST
   environment:
     API_KEY: ${env:API_KEY}
 
@@ -24,19 +38,16 @@ provider:
     OTEL_METRIC_EXPORT_TIMEOUT: "3000"
     OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "CUMULATIVE"
     OTEL_SERVICE_NAME: "foodmania-api"
-
-  apiGateway:
-    binaryMediaTypes:
-      - '*/*'
+  
 
 functions:
   api:
     handler: handler.handler
     events:
-      - http:
+      - httpApi:
           path: /
           method: any
-      - http:
+      - httpApi:
           path: '{proxy+}'
           method: any
 
