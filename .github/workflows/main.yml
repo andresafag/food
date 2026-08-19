@@ -133,7 +133,7 @@ jobs:
           fi
           
           echo "✅ Updating README.md with URL: $API_URL"
-          sed -i "s|🔗 Live Application URL: .*|🔗 Live Application URL: $API_URL|g" README.md
+          sed -i -E "s|(Live Application URL: )[https://]*[a-zA-Z0-9.-]+\.execute-api\.[a-zA-Z0-9.-]+\.amazonaws\.com[a-zA-Z0-9_/-]*|\1$API_URL|g" README.md
 
       - name: Commit and Push changes
         run: |
