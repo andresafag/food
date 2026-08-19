@@ -28,55 +28,58 @@ Foodmania showcases modern cloud engineering, secure DevOps automation, and scal
 
 ---
 
-# ✨ Usage
+#  Usage
 
-The application decouples its business capabilities into three functional culinary modules:
+The application currently exposes six server-rendered routes, each backed by its own Pug view:
 
-### 1. Recipe Search
-The main web view connects to the Spoonacular REST API. Users input any target dish or ingredient payload, and the backend orchestrates data validation to output structured, clean metadata cards.
+| Route | View | Purpose |
+| :--- | :--- | :--- |
+| `GET /` | `index.pug` | Home page / recipe search, powered by the Spoonacular API |
+| `GET /random` | `randomrecipe.pug` | Surfaces a random recipe suggestion |
+| `GET /menu` | `menu.pug` | Browsable recipe/menu grid |
+| `GET /planner` | `plan.pug` | Meal-planning view |
+| `GET /mealplan` | `mealplanner.pug` | Assembles selected recipes into a meal plan |
+| `GET /wine-pairs` | `wine-pairs.pug` | Wine-pairing suggestions for dishes |
 
-### 2. Meal Planner
-A planning interface that assembles chosen recipes into a weekly menu, generates ingredient checklists, and previews meal schedules.
-
-### 3. Wine Pairing
-Renders the wine-pairing to display recommendations on wines for dishes, tasting notes, pairing rationale, and serving suggestions.
+Every route receives the Spoonacular `apiKey` (loaded from the `API_KEY` environment variable) and renders it into the corresponding view for client-side calls to the Spoonacular API.
 
 ---
 
 # 🏗️ Cloud & Deployment Architectures
 
-### Runtime Infrastructure Architecture
-The system has been completely decoupled from traditional stateful server constraints into an ephemeral serverless runtime. Static files (CSS/JS) and media configurations are packaged and streamed over base64 protocols through AWS API Gateway directly from the Lambda package.
+The system runs as an ephemeral Lambda function rather than a long-lived server. Static assets (CSS/JS/images) and Pug views are packaged into the Lambda deployment artifact and served directly from the function.
 
 ```mermaid
 graph TD
     Client[Client Browser] -->|HTTPS Request| APIGateway[Amazon API Gateway]
-    APIGateway -->|Triggers Context| Lambda[AWS Lambda Function Node 20.x]
-    
-    subgraph "AWS Lambda Runtime (/var/task)"
-        Lambda -->|"Event Bridge"| Handler["handler.js / @vendia/serverless-express"]
-        Handler -->|"Routes Request"| Express[Express App Instance]
-        Express -->|"Compiles"| Views[Pug Templates Engine]
-        Express -->|"Packages"| Static[Static Assets Base64 Stream]
+    APIGateway -->|Triggers| Lambda[AWS Lambda Function Node 20.x]
+
+    subgraph "AWS Lambda Runtime"
+        Lambda -->|Invokes| Handler["handler.js / @vendia/serverless-express"]
+        Handler -->|Routes Request| Express[Express App Instance]
+        Express -->|Renders| Views[Pug Templates]
+        Express -->|Serves| Static[Static Assets]
     end
-    
-    Express -->|"REST Outbound"| Spoonacular[Spoonacular External API]
-    Express -->|"Exports OTLP"| OTEL[OpenTelemetry Collector]
-    OTEL -->|"Forward OTLP"| Observability[OTLP / Tracing Backend]
-    Views -->|"Compiled HTML Response"| Client
-    Static -->|"Optimized Static Stream"| Client
+
+    Views -->|"Inline Spoonacular API Key"| Client
+    Client -->|"Client-side REST calls"| Spoonacular[Spoonacular External API]
+    Handler -->|"Records request count + latency"| OTEL[OpenTelemetry Metrics SDK]
+    OTEL -->|"OTLP/HTTP export"| Backend[Prometheus-compatible OTLP Backend]
 ```
 
-```markdown
-food/
-├── public/                 # Static assets (CSS, client-side JS, layout assets)
-├── views/                  # Pug presentation tier layouts
-├── app.js                  # Pure, framework-agnostic Express routing configurations
-├── handler.js              # Ephemeral adapter layer for AWS Lambda interface execution
-├── package.json            # Global production and development dependencies metadata
-└── infra/                  # Dedicated infrastructure automation module
-    └── serverless.yml      # Declarative Infrastructure as Code blueprint (Serverless v4)
 ```
+food/
+├── public/                 # Static assets (CSS, client-side JS, images)
+├── views/                  # Pug templates (index, menu, plan, mealplanner, randomrecipe, wine-pairs)
+├── cypress/                # Cypress end-to-end test specs
+├── app.js                  # Express app definition and route table
+├── handler.js              # AWS Lambda adapter (@vendia/serverless-express) + OpenTelemetry metrics
+├── package.json             # Dependencies and npm scripts
+├── .github/workflows/       # CI (build + Cypress) and CD (OIDC deploy) pipeline
+└── infra/                   # Infrastructure as Code
+    └── serverless.yml       # Serverless Framework service definition
+```
+
 
 # ✨ Core Features
 
@@ -102,61 +105,80 @@ food/
 
 | Layer | Component | Description |
 | :--- | :--- | :--- |
-| **Frontend** | HTML5, CSS3, JS (ES6+) | Modern, lightweight document layout structures. |
-| **Template Engine** | Pug | High performance HTML shorthand syntax compiler. |
-| **Application Runtime**| Node.js 20.x / Express.js | Microservice backend container baseline. |
-| **Cloud Computing** | AWS Lambda | Ephemeral computing platform for zero-maintenance scaling. |
-| **API Proxy** | Amazon API Gateway | Public proxy interface mapping routes to Serverless handlers. |
-| **Telemetry** | OpenTelemetry + AWS CloudWatch | Distributed tracing and metrics via OpenTelemetry SDK & Collector, with exporters to CloudWatch and OTLP-compatible backends. |
-| **State Orchestration**| AWS SSM Parameter Store | Configuration state repository for global S3 deployment mappings. |
-| **CI/CD / IaC** | Serverless v4 & GitHub Actions | Infrastructure as Code provisioning paired with an OIDC pipeline. |
+| **Frontend** | HTML5, CSS3, JS (ES6+) | Static assets served alongside the rendered pages. |
+| **Template Engine** | Pug | Server-side view rendering. |
+| **Application Runtime** | Node.js 20.x / Express.js | HTTP routing and rendering, defined in `app.js`. |
+| **Data Layer** | Mongoose | Listed as a project dependency for MongoDB modeling; not currently wired into any route in `app.js`. |
+| **Cloud Computing** | AWS Lambda | Runs the Express app via `@vendia/serverless-express`, with `app.listen()` commented out in favor of the Lambda handler. |
+| **API Proxy** | Amazon API Gateway (HTTP API) | Routes all paths (`/`, `{proxy+}`) to the Lambda function. |
+| **Telemetry** | OpenTelemetry Metrics SDK | `handler.js` records an HTTP request counter and a response-duration histogram per invocation, exported over OTLP/HTTP and force-flushed before the Lambda response returns. |
+| **External API** | Spoonacular | Supplies recipe, ingredient, and pairing data to the views. |
+| **CI/CD / IaC** | Serverless Framework & GitHub Actions | Declarative infrastructure paired with an OIDC-authenticated GitHub Actions pipeline. |
+| **Testing** | Cypress | End-to-end specs (`cypress/e2e`) run in CI against the deployed API Gateway URL. |
 
 ---
 
 # 🎯 DevOps & Software Engineering Mastery
 
 ### Cloud Automation & GitOps
-* **Secure Cloud Handshakes:** Complete mitigation of permanent access key risk profiles through OpenID Connect integrations with IAM trusted policies.
-* **Dependency Cache Mapping:** Optimizing GitHub runner execution loops via `actions/cache@v4` routines attached to lockfile hashes, reducing overall delivery overhead.
-* **State Externalization:** Leveraging automated platform locks via AWS SSM to securely abstract artifact locations.
+* **Secure Cloud Handshakes:** GitHub Actions authenticates to AWS via OpenID Connect (`aws-actions/configure-aws-credentials`) and an IAM role trust policy — no long-lived AWS access keys stored as secrets.
+* **Dependency Caching:** `actions/cache@v4` caches `node_modules` keyed on the `package-lock.json` hash to speed up CI runs.
+* **Secret Injection:** The CD job writes `API_KEY` from GitHub Actions secrets into a temporary `.env` file, consumed via `dotenv-cli` at deploy time (`npx dotenv -e ../.env -- serverless deploy`).
 
 ### Production Backend Engineering
 * **Serverless Express Wrappers:** Translating REST requests effortlessly into standard Lambda execution payloads using `@vendia/serverless-express`.
-* **Robust Configuration Encapsulation:** Strict environment variables sanitization using robust `dotenv-cli` injectors, blocking local keys from leaking into target codebases.
+* **Environment Configuration:** `dotenv` loads `API_KEY` locally in `app.js`; in Lambda, the same variable is supplied via the `serverless.yml` `provider.environment` block.
 
 ---
 
 # **OpenTelemetry (Tracing & Metrics)**
 
-This project is now instrumented with OpenTelemetry to provide distributed tracing and metrics across the serverless runtime and downstream API calls.
+`handler.js` instruments the Lambda handler with the OpenTelemetry **Metrics** SDK — this project does not currently implement distributed tracing/spans, only request-count and latency metrics.
 
-- **What it does:** Collects spans for HTTP requests, Lambda executions, and outbound API calls (e.g., Spoonacular), and exports them to an OTLP endpoint or AWS CloudWatch/CloudWatch Agent via an OpenTelemetry Collector.
-- **Benefits:** Visualize end-to-end request flow, identify latency hotspots, and correlate logs with traces.
+- **What it does:** On every invocation, records an HTTP request counter (`foodmania_http_requests_total`) and a response-duration histogram (`foodmania_http_response_duration_ms`), labeled by method, path, and status code. A `MeterProvider` is initialized once per cold start and reused across warm invocations; metrics are force-flushed before the handler returns, since Lambda freezes the process immediately after the response resolves.
+- **Exporter:** `@opentelemetry/exporter-metrics-otlp-http`, sending OTLP/HTTP metrics to a Prometheus-compatible collector endpoint.
 
-**Quick setup (local development)**
-
-- **Install runtime instrumentation:**
+**Actual dependencies (from `package.json`)**
 
 ```bash
-npm install --save @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-collector-grpc
+npm install @opentelemetry/api @opentelemetry/sdk-metrics @opentelemetry/exporter-metrics-otlp-http @opentelemetry/resources @opentelemetry/semantic-conventions
 ```
 
-- **Environment variables (example):**
+**Environment variables (as configured in `infra/serverless.yml`)**
 
 ```bash
-export OTEL_SERVICE_NAME=foodmania
-export OTEL_EXPORTER_OTLP_ENDPOINT=http://44.210.111.254:9090
+OTEL_SERVICE_NAME=foodmania-api
+OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://44.210.111.254:9090/api/v1/otlp/v1/metrics
+OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+OTEL_METRICS_EXPORTER=otlp
+OTEL_METRIC_EXPORT_INTERVAL=5000
+OTEL_METRIC_EXPORT_TIMEOUT=3000
+OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=CUMULATIVE
 ```
 
-**Basic verification**
+**Metrics flow**
 
-- Ensure your OTLP backend is running, run the app, then trigger a few requests through the UI or `curl` and check the backend UI for spans/metrics.
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant API as API Gateway
+    participant Lambda
+    participant Handler as handler.js
+    participant OTEL as OTLP Metrics Exporter
+    participant Backend as OTLP/Prometheus Backend
 
-**CI / Production considerations**
+    Browser->>API: HTTPS request
+    API->>Lambda: Trigger
+    Lambda->>Handler: Invoke handler
+    Handler->>Handler: serverlessExpress(event, context)
+    Handler->>Handler: Record request counter + duration histogram
+    Handler->>OTEL: forceFlush() metrics before returning
+    OTEL->>Backend: Export via OTLP/HTTP
+    Handler-->>Browser: HTTP response
+```
 
-- Sampling: configure your tracer or collector sampling settings to control sample rate in production.
-- Exporter endpoints: configure the Collector in AWS (ECS / EC2) or use a managed OTLP endpoint; you can also use AWS Distro for OpenTelemetry (ADOT) to forward to CloudWatch.
-- Secure exporter endpoints and credentials via environment variables and AWS SSM Parameter Store.
+Cypress end-to-end specs live in `cypress/e2e`. In CI, `cypress-io/github-action` runs the suite against the deployed HTTPAPI URL; on failure, screenshots and videos are uploaded as workflow artifacts.
+
 
 **Diagrams: Tracing & Telemetry Flow**
 
@@ -196,6 +218,15 @@ graph LR
 ```
 
 
-# 📄 License
+#  Deployment
 
-This project is created exclusively for educational purposes and architectural validation runs, serving as an open-source demonstration of lean, modern serverless development.
+Deployment is defined in `infra/serverless.yml` (Serverless Framework, `nodejs20.x` runtime, packaging `app.js`, `handler.js`, `package.json`, `node_modules`, `views/`, and `public/`) and driven by `.github/workflows/main.yml`:
+
+1. **Continuous Integration** — installs dependencies and runs the Cypress suite against the live deployment on every push/PR to `master`/`main`.
+2. **Continuous Deployment** — on a successful push to `master`/`main`, authenticates to AWS via OIDC, injects the `API_KEY` secret into a temporary `.env`, and runs `serverless deploy` from `infra/`.
+
+---
+
+#  License
+
+This project is created for educational purposes and architectural experimentation (`package.json` declares the **ISC** license), serving as an open-source demonstration of a lean, serverless Node.js application.
