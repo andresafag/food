@@ -106,13 +106,17 @@ jobs:
           INFO_OUTPUT=$(npx dotenv -e ../.env -- serverless info)
           echo "$INFO_OUTPUT"
           
-          API_URL=$(echo "$INFO_OUTPUT" | grep -oE 'https://[a-zA-Z0-9-]+\.execute-api\.[a-zA-Z0-9-]+\.amazonaws\.com/[a-zA-Z0-9_-]*' | head -n 1)
+          # 3. Strip ANSI escape colors AND extract the clean URL ending in .com/
+          API_URL=$(echo "$INFO_OUTPUT" | sed 's/\x1b\[[0-9;]*m//g' | grep -o 'https://[^ ]*execute-api[^ ]*' | head -n 1)
+          
+          echo "Extracted URL: $API_URL"
           
           if [ -z "$API_URL" ]; then
-            echo "❌ Error: No se pudo obtener la URL del endpoint."
+            echo "❌ Error: Could not extract endpoint URL."
             exit 1
           fi
           
+          # 4. Export to step output
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
 
       - name: Update README.md
