@@ -106,8 +106,7 @@ jobs:
           INFO_OUTPUT=$(npx dotenv -e ../.env -- serverless info)
           echo "$INFO_OUTPUT"
           
-          # 3. Strip ANSI escape colors AND extract the clean URL ending in .com/
-          API_URL=$(echo "$INFO_OUTPUT" | sed 's/\x1b\[[0-9;]*m//g' | grep -o 'https://[^ ]*execute-api[^ ]*' | head -n 1)
+          API_URL=$(echo "$INFO_OUTPUT" | awk '/execute-api/ {print $NF}' | head -n 1 | tr -d '\r')
           
           echo "Extracted URL: $API_URL"
           
@@ -116,7 +115,6 @@ jobs:
             exit 1
           fi
           
-          # 4. Export to step output
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
 
       - name: Update README.md
