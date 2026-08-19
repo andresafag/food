@@ -140,4 +140,11 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "docs: Update API endpoint in README [skip ci]" && git push)
+
+          if git diff --staged --quiet README.md; then
+            echo "No hay cambios en el README.md para actualizar."
+          else
+            echo "Cambios detectados en README.md. Guardando..."
+            git commit -m "docs: Update API endpoint in README [skip ci]"
+            git push
+          fi
