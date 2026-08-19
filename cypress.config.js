@@ -12,9 +12,9 @@ module.exports = defineConfig({
       const version = process.env.TEST_ENV || 'local';
       
       if (version === 'staging') {
-        config.baseUrl = 'https://itse8cfhej.execute-api.us-east-1.amazonaws.com';
+        config.baseUrl = 'https://itse8cfhej.execute-api.us-east-1.amazonaws.com/';
       } else if (version === 'production') {
-        config.baseUrl = 'https://itse8cfhej.execute-api.us-east-1.amazonaws.com';
+        config.baseUrl = 'https://itse8cfhej.execute-api.us-east-1.amazonaws.com/';
       }
 
       return config;
