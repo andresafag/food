@@ -1,6 +1,7 @@
 org: andresafag
 app: my-app
 service: express-pug-app
+useDotenv: true
 
 
 custom:
@@ -48,8 +49,9 @@ functions:
           path: /
           method: any
       - httpApi:
-          path: '{proxy+}'
+          path: /{proxy+}
           method: any
+
 
 
 package:

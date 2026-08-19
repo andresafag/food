@@ -6,10 +6,9 @@ on:
   pull_request:
     branches: [ master, main ]
 
-# 🔑 CRUCIAL FOR OIDC: Allows GitHub Actions request JWTs from AWS
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 jobs:
   continuous-integration:
@@ -98,8 +97,33 @@ jobs:
 
       # Despliegue modular desde la subcarpeta /infra
       - name: Deploy to AWS Cloud
+        id: deploy
         env:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
         run: |
           cd infra
-          npx dotenv -e ../.env -- serverless deploy
+          npx dotenv -e ../.env -- serverless deploy > deploy_output.txt
+          cat deploy_output.txt
+          API_URL=$(grep -o 'https://[a-z0-9-]*\.execute-api\.[a-z0-9-]*\.amazonaws\.com/[a-zA-Z0-9_-]*/' deploy_output.txt | head -n 1)
+          echo "La URL extraída es: $API_URL"
+          echo "api_url=$API_URL" >> $GITHUB_OUTPUT
+
+      - name: Update README.md
+        # Este paso corre en la raíz del repositorio
+        run: |
+          API_URL="${{ steps.deploy.outputs.api_url }}"
+          
+          if [ -z "$API_URL" ]; then
+            echo "❌ Error: URL not found."
+            exit 1
+          fi
+          
+          echo "✅ Updating README.md with URL: $API_URL"
+          sed -i "s|🔗 Live Application URL: .*|🔗 Live Application URL: $API_URL|g" README.md
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || (git commit -m "docs: Update API endpoint in README [skip ci]" && git push)
