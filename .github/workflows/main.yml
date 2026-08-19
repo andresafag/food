@@ -108,6 +108,8 @@ jobs:
           --region us-east-1 \
           --query "Stacks[0].Outputs[?OutputKey=='ServiceEndpoint'].OutputValue" \
           --output text)
+          
+          echo "api_url=$API_URL" >> $GITHUB_OUTPUT
 
       - name: Update README.md
         # Este paso corre en la raíz del repositorio
