@@ -106,7 +106,7 @@ jobs:
           INFO_OUTPUT=$(npx dotenv -e ../.env -- serverless info)
           echo "$INFO_OUTPUT"
           
-          API_URL=$(echo "$INFO_OUTPUT" | grep -o 'https://[a-zA-Z0-9-]*\.execute-api\.[a-zA-Z0-9-]*\.amazonaws\.com/[a-zA-Z0-9_-]*/' | head -n 1)
+          API_URL=$(echo "$INFO_OUTPUT" | grep -oE 'https://[a-zA-Z0-9-]+\.execute-api\.[a-zA-Z0-9-]+\.amazonaws\.com/[a-zA-Z0-9_-]*' | head -n 1)
           
           if [ -z "$API_URL" ]; then
             echo "❌ Error: No se pudo obtener la URL del endpoint."
