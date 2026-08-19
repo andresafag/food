@@ -103,19 +103,11 @@ jobs:
         run: |
           cd infra
           npx dotenv -e ../.env -- serverless deploy
-          INFO_OUTPUT=$(npx dotenv -e ../.env -- serverless info)
-          echo "$INFO_OUTPUT"
-          
-          API_URL=$(echo "$INFO_OUTPUT" | awk '/execute-api/ {print $NF}' | head -n 1 | tr -d '\r')
-          
-          echo "Extracted URL: $API_URL"
-          
-          if [ -z "$API_URL" ]; then
-            echo "❌ Error: Could not extract endpoint URL."
-            exit 1
-          fi
-          
-          echo "api_url=$API_URL" >> $GITHUB_OUTPUT
+          API_URL=$(aws cloudformation describe-stacks \
+          --stack-name express-pug-app-dev \
+          --region us-east-1 \
+          --query "Stacks[0].Outputs[?OutputKey=='ServiceEndpoint'].OutputValue" \
+          --output text)
 
       - name: Update README.md
         # Este paso corre en la raíz del repositorio
