@@ -103,11 +103,22 @@ jobs:
         run: |
           cd infra
           npx dotenv -e ../.env -- serverless deploy
+    
+          echo "api_url=$API_URL" >> $GITHUB_OUTPUT# 2. Consultar directamente CloudFormation buscando 'HttpApiUrl'
           API_URL=$(aws cloudformation describe-stacks \
-          --stack-name express-pug-app-dev \
-          --region us-east-1 \
-          --query "Stacks[0].Outputs[?OutputKey=='ServiceEndpoint'].OutputValue" \
-          --output text)
+            --stack-name express-pug-app-dev \
+            --region us-east-1 \
+            --query "Stacks[0].Outputs[?OutputKey=='HttpApiUrl'].OutputValue" \
+            --output text)
+            
+          API_URL="${API_URL}/"
+          
+          echo "URL extraída desde CloudFormation: $API_URL"
+          
+          if [ -z "$API_URL" ] || [ "$API_URL" == "/" ]; then
+            echo "❌ Error: No se pudo obtener la URL desde CloudFormation."
+            exit 1
+          fi
           
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
 
