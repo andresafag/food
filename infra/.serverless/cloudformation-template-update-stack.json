@@ -91,7 +91,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-          "S3Key": "serverless/express-pug-app/dev/1787078827391-2026-08-18T18:47:07.391Z/api.zip"
+          "S3Key": "serverless/express-pug-app/dev/1787291703314-2026-08-21T05:55:03.314Z/express-pug-app-api.zip"
         },
         "Handler": "handler.handler",
         "Runtime": "nodejs20.x",
@@ -101,8 +101,8 @@
         "Environment": {
           "Variables": {
             "API_KEY": "4c17e459cfec4721a0f4ac09605d1daf",
-            "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "http://44.210.111.254:9090/api/v1/otlp/v1/metrics",
-            "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
+            "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "http://3.83.136.67:9090/api/v1/otlp",
+            "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL": "http/protobuf",
             "OTEL_METRICS_EXPORTER": "otlp",
             "OTEL_METRIC_EXPORT_INTERVAL": "5000",
             "OTEL_METRIC_EXPORT_TIMEOUT": "3000",
@@ -121,14 +121,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionr45sQ1Sd8nZse7ItPVe0LbNCYkgq8FvOd05dmNTKcBs": {
+    "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "CDi4FpEqPKsKV5eRbt/N0CqXMcEroHjNw7ff5oVKWlc="
+        "CodeSha256": "HCeP25OiE9FNw01fTrDfs5gyJ3U6cesgK1GE0T3fUHg="
       }
     },
     "HttpApi": {
@@ -275,7 +275,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionr45sQ1Sd8nZse7ItPVe0LbNCYkgq8FvOd05dmNTKcBs"
+        "Ref": "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4"
       },
       "Export": {
         "Name": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"

@@ -2,7 +2,7 @@
 
 const { MeterProvider, PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
 const { OTLPMetricExporter } = require('@opentelemetry/exporter-metrics-otlp-http');
-const { Resource } = require('@opentelemetry/resources');
+const { resourceFromAttributes } = require('@opentelemetry/resources');
 const { ATTR_SERVICE_NAME } = require('@opentelemetry/semantic-conventions');
 const { metrics } = require('@opentelemetry/api');
 const serverlessExpress = require('@vendia/serverless-express');
@@ -13,34 +13,35 @@ const app = require('./app');
 // ---------------------------------------------------------------------------
 let meterProvider;
 function initOtel() {
-  if (meterProvider) return; // already initialized
+  if (meterProvider) return;
 
-  try {
-    // Try to initialize OTel — if any error occurs, swallow it and continue.
-    const exporter = new OTLPMetricExporter({
-      url: process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT,
-    });
+  const endpoint = `${process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT}/v1/metrics`;
 
-    const reader = new PeriodicExportingMetricReader({
-      exporter,
-      exportIntervalMillis: parseInt(process.env.OTEL_METRIC_EXPORT_INTERVAL || '5000', 10),
-      exportTimeoutMillis: parseInt(process.env.OTEL_METRIC_EXPORT_TIMEOUT || '3000', 10),
-    });
+  console.log('Initializing OpenTelemetry');
+  console.log('OTLP endpoint:', endpoint);
+  console.log('OTLP protocol:', process.env.OTEL_EXPORTER_OTLP_METRICS_PROTOCOL);
 
-    meterProvider = new MeterProvider({
-      resource: new Resource({
-        [ATTR_SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'foodmania-api',
-      }),
-      readers: [reader],
-    });
+  const exporter = new OTLPMetricExporter({
+    url: endpoint,
+  });
 
-    // Register as global so any future instrumentation can use metrics.getMeter()
-    metrics.setGlobalMeterProvider(meterProvider);
-    console.log('OTel MeterProvider initialized, exporting to:', process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT);
-  } catch (err) {
-    console.warn('OTel initialization failed — continuing without metrics:', err && err.message ? err.message : err);
-    meterProvider = null;
-  }
+  const reader = new PeriodicExportingMetricReader({
+    exporter,
+    exportIntervalMillis: 5000,
+    exportTimeoutMillis: 3000,
+  });
+
+  meterProvider = new MeterProvider({
+    resource: resourceFromAttributes({
+      [ATTR_SERVICE_NAME]:
+        process.env.OTEL_SERVICE_NAME || 'foodmania-api',
+    }),
+    readers: [reader],
+  });
+
+  metrics.setGlobalMeterProvider(meterProvider);
+
+  console.log('OTel MeterProvider initialized');
 }
 
 // Ensure init errors don't crash module init
@@ -72,6 +73,8 @@ try {
   requestCounter = { add: () => {} };
   responseHistogram = { record: () => {} };
 }
+
+
 
 // ---------------------------------------------------------------------------
 // Serverless Express adapter — reused across warm invocations
@@ -107,14 +110,6 @@ module.exports.handler = async (event, context) => {
 
   requestCounter.add(1, labels);
   responseHistogram.record(durationMs, labels);
-
-  if (meterProvider && typeof meterProvider.forceFlush === 'function') {
-    try {
-      await meterProvider.forceFlush();
-    } catch (err) {
-      console.error('OTel forceFlush error:', err);
-    }
-  }
 
   return response;
 };

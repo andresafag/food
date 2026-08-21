@@ -1,0 +1,10 @@
+version: 0.1
+resource_usage:
+  # Se mantiene igual porque tu función Lambda no cambió de nombre
+  AWS::Lambda::Function.ApiLambdaFunction:
+    monthly_requests: 1000000000
+    request_duration_ms: 200
+
+  # Cambiado al nuevo recurso HTTP API V2 listado en tu consola
+  AWS::ApiGatewayV2::Api.HttpApi:
+    monthly_requests: 10000000000

@@ -227,6 +227,24 @@ Deployment is defined in `infra/serverless.yml` (Serverless Framework, `nodejs20
 
 ---
 
+# Performance Optimization & Latency Reduction
+
+To ensure a fast and responsive user experience, this project implements This project implements an advanced build strategy using esbuild to drastically reduce latency across both the server and the client. First, we optimized AWS Lambda cold starts by eliminating dead code and shrinking the deployment package size, allowing idle functions to boot up in milliseconds instead of seconds. Second, we accelerated Node.js code execution by bundling the entire application into a single file (handler.js); this eliminates time-consuming disk lookups for individual dependencies, enabling Express to process requests and render Pug HTML instantly from memory. Finally, we streamlined front-end asset delivery by minifying client-side JavaScript and CSS inside the public/ directory, significantly reducing network payload sizes for a faster browser loading experience. to minimize page latency and maximize core web vitals. Key optimizations include compressing and modernizing images (WebP/AVIF format), minifying production source code, and leveraging browser caching alongside Content Delivery Networks (CDNs) for faster asset delivery. Additionally, we reduced critical-path blocking by implementing lazy loading for non-essential resources, asynchronous loading for heavy scripts, and efficient server-side data fetching. Together, these steps drastically decrease Time to First Byte (TTFB) and First Contentful Paint (FCP), ensuring seamless navigation even on slower network connections.
+
+Before latency:
+
+![latencybe](before_latency.png)
+
+Here you can see that each user experience a latency of 1.495 ms in Prometheus
+
+![latencybe](after_latency.png)
+
+And in this screenshot you can note that it decreased its latency to 1.410 ms
+
+Also added this line to the app.js to help with cache app.enable('view cache');
+
+---
+
 #  License
 
 This project is created for educational purposes and architectural experimentation (`package.json` declares the **ISC** license), serving as an open-source demonstration of a lean, serverless Node.js application.

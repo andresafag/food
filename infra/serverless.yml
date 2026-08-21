@@ -3,11 +3,6 @@ app: my-app
 service: express-pug-app
 useDotenv: true
 
-
-custom:
-  serverless-offline:
-    noPrependStageInUrl: true
-
 provider:
   name: aws
   runtime: nodejs20.x
@@ -29,17 +24,24 @@ provider:
         - POST
   environment:
     API_KEY: ${env:API_KEY}
-
-    # OTel — self-managed SDK, no ADOT layer needed
-    # Full signal-specific path required for Prometheus OTLP ingestion
-    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://44.210.111.254:9090/api/v1/otlp/v1/metrics"
-    OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://3.83.136.67:9090/api/v1/otlp"
+    OTEL_EXPORTER_OTLP_METRICS_PROTOCOL: "http/protobuf"
     OTEL_METRICS_EXPORTER: "otlp"
     OTEL_METRIC_EXPORT_INTERVAL: "5000"
     OTEL_METRIC_EXPORT_TIMEOUT: "3000"
     OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "CUMULATIVE"
     OTEL_SERVICE_NAME: "foodmania-api"
-  
+
+# ACTIVA ESBUILD NATIVO: Elimina código muerto, reduce tamaño de dependencias y unifica todo.
+build:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: false
+    # Obliga a esbuild a mantener a Pug como dependencia externa dinámica.
+    # Las plantillas Pug necesitan compilarse en tiempo de ejecución de Node, no por esbuild.
+    external:
+      - pug
 
 functions:
   api:
@@ -52,15 +54,9 @@ functions:
           path: /{proxy+}
           method: any
 
-
-
 package:
   individually: true
+  # SOLUCIÓN DE RUTAS: Forzamos a Serverless a inyectar las carpetas Pug en la raíz exacta de Lambda
   patterns:
-    - '!**'                
-    - '../app.js'
-    - '../handler.js'
-    - '../package.json'
-    - '../node_modules/**'
-    - '../views/**'        
-    - '../public/**'       
+    - '../views/**'
+    - '../public/**'
