@@ -12,7 +12,7 @@ Have you ever wondered what ingredients to use or how long it takes to cook cert
 
 The application is deployed entirely using an enterprise-ready, **fully serverless architecture** operating at 100%
 
-🔗 **Live Application URL:** [DEMO](https://akn9xyam4d.execute-api.us-east-1.amazonaws.com/dev/)
+🔗 **Live Application URL:** [DEMO](https://itse8cfhej.execute-api.us-east-1.amazonaws.com/)
 
 ---
 
