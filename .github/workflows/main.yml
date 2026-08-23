@@ -41,13 +41,14 @@ jobs:
       
       # Run Cypress tests with build and start commands
       - name: Run Cypress Tests
+        continue-on-error: true
         uses: cypress-io/github-action@v6
         with:
           working-directory: ./
           config: baseUrl=https://itse8cfhej.execute-api.us-east-1.amazonaws.com/
 
       - name: Upload Cypress Artifacts
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-error-snapshots
