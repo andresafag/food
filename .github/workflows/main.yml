@@ -46,8 +46,6 @@ jobs:
           working-directory: ./
           config: baseUrl=https://itse8cfhej.execute-api.us-east-1.amazonaws.com/
 
-
-      # Upload Cypress Artifacts on Failure
       - name: Upload Cypress Artifacts
         if: failure()
         uses: actions/upload-artifact@v4
@@ -82,7 +80,7 @@ jobs:
       - name: Install Serverless Framework CLI
         run: npm install -g serverless
 
-      # 🔐 AUTENTICACIÓN SEGURA MEDIANTE OIDC
+      # 🔐
       - name: Configure AWS Credentials via IAM OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -90,12 +88,10 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
 
-      # Genera dinámicamente el .env temporal para dotenv-cli
       - name: Inject Secrets into Environment File
         run: |
           echo "API_KEY=${{ secrets.API_KEY }}" > .env
 
-      # Despliegue modular desde la subcarpeta /infra
       - name: Deploy to AWS Cloud
         id: deploy
         env:
@@ -123,7 +119,6 @@ jobs:
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
 
       - name: Update README.md
-        # Este paso corre en la raíz del repositorio
         run: |
           API_URL="${{ steps.deploy.outputs.api_url }}"
           

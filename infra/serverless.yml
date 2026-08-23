@@ -53,10 +53,16 @@ functions:
       - httpApi:
           path: /{proxy+}
           method: any
+      - schedule:
+          rate: rate(2 minutes)
+          enabled: true
+          input:
+            source: 'aws.events'
+            detail-type: 'Scheduled Event'
+            action: 'warmup'
 
 package:
   individually: true
-  # SOLUCIÓN DE RUTAS: Forzamos a Serverless a inyectar las carpetas Pug en la raíz exacta de Lambda
   patterns:
     - '../views/**'
     - '../public/**'

@@ -132,7 +132,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-                "S3Key": "serverless/express-pug-app/dev/1787291703314-2026-08-21T05:55:03.314Z/express-pug-app-api.zip"
+                "S3Key": "serverless/express-pug-app/dev/1787453297807-2026-08-23T02:48:17.807Z/express-pug-app-api.zip"
               },
               "Handler": "handler.handler",
               "Runtime": "nodejs20.x",
@@ -162,14 +162,52 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4": {
+          "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "HCeP25OiE9FNw01fTrDfs5gyJ3U6cesgK1GE0T3fUHg="
+              "CodeSha256": "fDrnLlusr/BBzz8Y39h5c3m4UxtvQ9dF1ZsphF16KYs="
+            }
+          },
+          "ApiEventsRuleSchedule1": {
+            "Type": "AWS::Events::Rule",
+            "Properties": {
+              "ScheduleExpression": "rate(2 minutes)",
+              "State": "ENABLED",
+              "Targets": [
+                {
+                  "Input": "{\"source\":\"aws.events\",\"detail-type\":\"Scheduled Event\",\"action\":\"warmup\"}",
+                  "Arn": {
+                    "Fn::GetAtt": [
+                      "ApiLambdaFunction",
+                      "Arn"
+                    ]
+                  },
+                  "Id": "apiSchedule"
+                }
+              ]
+            }
+          },
+          "ApiLambdaPermissionEventsRuleSchedule1": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ApiLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "events.amazonaws.com",
+              "SourceArn": {
+                "Fn::GetAtt": [
+                  "ApiEventsRuleSchedule1",
+                  "Arn"
+                ]
+              }
             }
           },
           "HttpApi": {
@@ -313,7 +351,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4"
+              "Ref": "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM"
             },
             "Export": {
               "Name": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"
@@ -377,6 +415,19 @@
             },
             "resolvedMethod": "ANY",
             "resolvedPath": "/{proxy+}"
+          },
+          {
+            "schedule": {
+              "rate": [
+                "rate(2 minutes)"
+              ],
+              "enabled": true,
+              "input": {
+                "source": "aws.events",
+                "detail-type": "Scheduled Event",
+                "action": "warmup"
+              }
+            }
           }
         ],
         "name": "express-pug-app-dev-api",
@@ -387,7 +438,7 @@
         "timeout": 6,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4"
+        "versionLogicalId": "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM"
       }
     },
     "configValidationMode": "warn",
@@ -421,7 +472,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/express-pug-app/dev/code-artifacts",
         "deploymentBucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-        "artifactDirectoryName": "serverless/express-pug-app/dev/1787291703314-2026-08-21T05:55:03.314Z"
+        "artifactDirectoryName": "serverless/express-pug-app/dev/1787453297807-2026-08-23T02:48:17.807Z"
       }
     },
     "app": "my-app",
@@ -435,7 +486,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/express-pug-app/dev/1787291703314-2026-08-21T05:55:03.314Z",
+    "artifactDirectoryName": "serverless/express-pug-app/dev/1787453297807-2026-08-23T02:48:17.807Z",
     "artifact": ""
   }
 }

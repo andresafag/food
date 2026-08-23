@@ -136,7 +136,7 @@
               "Properties": {
                 "Code": {
                   "S3Bucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-                  "S3Key": "serverless/express-pug-app/dev/1787291703314-2026-08-21T05:55:03.314Z/express-pug-app-api.zip"
+                  "S3Key": "serverless/express-pug-app/dev/1787453297807-2026-08-23T02:48:17.807Z/express-pug-app-api.zip"
                 },
                 "Handler": "handler.handler",
                 "Runtime": "nodejs20.x",
@@ -166,14 +166,52 @@
                 "ApiLogGroup"
               ]
             },
-            "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4": {
+            "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM": {
               "Type": "AWS::Lambda::Version",
               "DeletionPolicy": "Retain",
               "Properties": {
                 "FunctionName": {
                   "Ref": "ApiLambdaFunction"
                 },
-                "CodeSha256": "HCeP25OiE9FNw01fTrDfs5gyJ3U6cesgK1GE0T3fUHg="
+                "CodeSha256": "fDrnLlusr/BBzz8Y39h5c3m4UxtvQ9dF1ZsphF16KYs="
+              }
+            },
+            "ApiEventsRuleSchedule1": {
+              "Type": "AWS::Events::Rule",
+              "Properties": {
+                "ScheduleExpression": "rate(2 minutes)",
+                "State": "ENABLED",
+                "Targets": [
+                  {
+                    "Input": "{\"source\":\"aws.events\",\"detail-type\":\"Scheduled Event\",\"action\":\"warmup\"}",
+                    "Arn": {
+                      "Fn::GetAtt": [
+                        "ApiLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "Id": "apiSchedule"
+                  }
+                ]
+              }
+            },
+            "ApiLambdaPermissionEventsRuleSchedule1": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "ApiLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "events.amazonaws.com",
+                "SourceArn": {
+                  "Fn::GetAtt": [
+                    "ApiEventsRuleSchedule1",
+                    "Arn"
+                  ]
+                }
               }
             },
             "HttpApi": {
@@ -321,7 +359,7 @@
             "ApiLambdaFunctionQualifiedArn": {
               "Description": "Current Lambda function version",
               "Value": {
-                "Ref": "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4"
+                "Ref": "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM"
               },
               "Export": {
                 "Name": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"
@@ -394,6 +432,19 @@
               },
               "resolvedMethod": "ANY",
               "resolvedPath": "/{proxy+}"
+            },
+            {
+              "schedule": {
+                "rate": [
+                  "rate(2 minutes)"
+                ],
+                "enabled": true,
+                "input": {
+                  "source": "aws.events",
+                  "detail-type": "Scheduled Event",
+                  "action": "warmup"
+                }
+              }
             }
           ],
           "name": "express-pug-app-dev-api",
@@ -404,7 +455,7 @@
           "timeout": 6,
           "runtime": "nodejs20.x",
           "vpc": {},
-          "versionLogicalId": "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4"
+          "versionLogicalId": "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM"
         }
       },
       "package": {
@@ -415,7 +466,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/express-pug-app/dev/code-artifacts",
         "deploymentBucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-        "artifactDirectoryName": "serverless/express-pug-app/dev/1787291703314-2026-08-21T05:55:03.314Z"
+        "artifactDirectoryName": "serverless/express-pug-app/dev/1787453297807-2026-08-23T02:48:17.807Z"
       }
     },
     "provider": {
@@ -546,7 +597,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-                "S3Key": "serverless/express-pug-app/dev/1787291703314-2026-08-21T05:55:03.314Z/express-pug-app-api.zip"
+                "S3Key": "serverless/express-pug-app/dev/1787453297807-2026-08-23T02:48:17.807Z/express-pug-app-api.zip"
               },
               "Handler": "handler.handler",
               "Runtime": "nodejs20.x",
@@ -576,14 +627,52 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4": {
+          "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "HCeP25OiE9FNw01fTrDfs5gyJ3U6cesgK1GE0T3fUHg="
+              "CodeSha256": "fDrnLlusr/BBzz8Y39h5c3m4UxtvQ9dF1ZsphF16KYs="
+            }
+          },
+          "ApiEventsRuleSchedule1": {
+            "Type": "AWS::Events::Rule",
+            "Properties": {
+              "ScheduleExpression": "rate(2 minutes)",
+              "State": "ENABLED",
+              "Targets": [
+                {
+                  "Input": "{\"source\":\"aws.events\",\"detail-type\":\"Scheduled Event\",\"action\":\"warmup\"}",
+                  "Arn": {
+                    "Fn::GetAtt": [
+                      "ApiLambdaFunction",
+                      "Arn"
+                    ]
+                  },
+                  "Id": "apiSchedule"
+                }
+              ]
+            }
+          },
+          "ApiLambdaPermissionEventsRuleSchedule1": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ApiLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "events.amazonaws.com",
+              "SourceArn": {
+                "Fn::GetAtt": [
+                  "ApiEventsRuleSchedule1",
+                  "Arn"
+                ]
+              }
             }
           },
           "HttpApi": {
@@ -731,7 +820,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4"
+              "Ref": "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM"
             },
             "Export": {
               "Name": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"
@@ -787,7 +876,7 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
-    "serviceRawFile": "org: andresafag\napp: my-app\nservice: express-pug-app\nuseDotenv: true\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: us-east-1 \n  stage: dev\n  httpApi:\n    cors:\n      allowedOrigins:\n        - '*'\n      allowedHeaders:\n        - Content-Type\n        - X-Amz-Date\n        - Authorization\n        - X-Api-Key\n        - X-Amz-Security-Token\n        - X-Amz-User-Agent\n      allowedMethods:\n        - GET\n        - POST\n  environment:\n    API_KEY: ${env:API_KEY}\n    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: \"http://3.83.136.67:9090/api/v1/otlp\"\n    OTEL_EXPORTER_OTLP_METRICS_PROTOCOL: \"http/protobuf\"\n    OTEL_METRICS_EXPORTER: \"otlp\"\n    OTEL_METRIC_EXPORT_INTERVAL: \"5000\"\n    OTEL_METRIC_EXPORT_TIMEOUT: \"3000\"\n    OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: \"CUMULATIVE\"\n    OTEL_SERVICE_NAME: \"foodmania-api\"\n\n# ACTIVA ESBUILD NATIVO: Elimina código muerto, reduce tamaño de dependencias y unifica todo.\nbuild:\n  esbuild:\n    bundle: true\n    minify: true\n    sourcemap: false\n    # Obliga a esbuild a mantener a Pug como dependencia externa dinámica.\n    # Las plantillas Pug necesitan compilarse en tiempo de ejecución de Node, no por esbuild.\n    external:\n      - pug\n\nfunctions:\n  api:\n    handler: handler.handler\n    events:\n      - httpApi:\n          path: /\n          method: any\n      - httpApi:\n          path: /{proxy+}\n          method: any\n\npackage:\n  individually: true\n  # SOLUCIÓN DE RUTAS: Forzamos a Serverless a inyectar las carpetas Pug en la raíz exacta de Lambda\n  patterns:\n    - '../views/**'\n    - '../public/**'\n",
+    "serviceRawFile": "org: andresafag\napp: my-app\nservice: express-pug-app\nuseDotenv: true\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: us-east-1 \n  stage: dev\n  httpApi:\n    cors:\n      allowedOrigins:\n        - '*'\n      allowedHeaders:\n        - Content-Type\n        - X-Amz-Date\n        - Authorization\n        - X-Api-Key\n        - X-Amz-Security-Token\n        - X-Amz-User-Agent\n      allowedMethods:\n        - GET\n        - POST\n  environment:\n    API_KEY: ${env:API_KEY}\n    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: \"http://3.83.136.67:9090/api/v1/otlp\"\n    OTEL_EXPORTER_OTLP_METRICS_PROTOCOL: \"http/protobuf\"\n    OTEL_METRICS_EXPORTER: \"otlp\"\n    OTEL_METRIC_EXPORT_INTERVAL: \"5000\"\n    OTEL_METRIC_EXPORT_TIMEOUT: \"3000\"\n    OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: \"CUMULATIVE\"\n    OTEL_SERVICE_NAME: \"foodmania-api\"\n\n# ACTIVA ESBUILD NATIVO: Elimina código muerto, reduce tamaño de dependencias y unifica todo.\nbuild:\n  esbuild:\n    bundle: true\n    minify: true\n    sourcemap: false\n    # Obliga a esbuild a mantener a Pug como dependencia externa dinámica.\n    # Las plantillas Pug necesitan compilarse en tiempo de ejecución de Node, no por esbuild.\n    external:\n      - pug\n\nfunctions:\n  api:\n    handler: handler.handler\n    events:\n      - httpApi:\n          path: /\n          method: any\n      - httpApi:\n          path: /{proxy+}\n          method: any\n      - schedule:\n          rate: rate(2 minutes)\n          enabled: true\n          input:\n            source: 'aws.events'\n            detail-type: 'Scheduled Event'\n            action: 'warmup'\n\npackage:\n  individually: true\n  patterns:\n    - '../views/**'\n    - '../public/**'\n",
     "command": [
       "deploy"
     ],
@@ -798,20 +887,20 @@
     "userName": "andresafag",
     "serviceProviderAwsAccountId": "688567305851",
     "serviceProviderAwsCfStackName": "express-pug-app-dev",
-    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:688567305851:stack/express-pug-app-dev/1c49d8f0-7347-11f1-a683-0e6c4e574109",
-    "serviceProviderAwsCfStackCreated": "2026-06-28T23:14:28.089Z",
-    "serviceProviderAwsCfStackUpdated": "2026-08-21T05:51:40.779Z",
-    "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:688567305851:stack/express-pug-app-dev/b3daf6f0-9e75-11f1-a9f9-12c85bdb9417",
+    "serviceProviderAwsCfStackCreated": "2026-08-22T22:06:19.246Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
         "OutputKey": "ApiLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:us-east-1:688567305851:function:express-pug-app-dev-api:46",
+        "OutputValue": "arn:aws:lambda:us-east-1:688567305851:function:express-pug-app-dev-api:56",
         "Description": "Current Lambda function version",
         "ExportName": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "HttpApiId",
-        "OutputValue": "itse8cfhej",
+        "OutputValue": "yoclydyq6h",
         "Description": "Id of the HTTP API",
         "ExportName": "sls-express-pug-app-dev-HttpApiId"
       },
@@ -822,7 +911,7 @@
       },
       {
         "OutputKey": "HttpApiUrl",
-        "OutputValue": "https://itse8cfhej.execute-api.us-east-1.amazonaws.com",
+        "OutputValue": "https://yoclydyq6h.execute-api.us-east-1.amazonaws.com",
         "Description": "URL of the HTTP API",
         "ExportName": "sls-express-pug-app-dev-HttpApiUrl"
       }
@@ -920,7 +1009,7 @@
           "Properties": {
             "Code": {
               "S3Bucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-              "S3Key": "serverless/express-pug-app/dev/1787291703314-2026-08-21T05:55:03.314Z/express-pug-app-api.zip"
+              "S3Key": "serverless/express-pug-app/dev/1787453297807-2026-08-23T02:48:17.807Z/express-pug-app-api.zip"
             },
             "Handler": "handler.handler",
             "Runtime": "nodejs20.x",
@@ -950,14 +1039,52 @@
             "ApiLogGroup"
           ]
         },
-        "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4": {
+        "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM": {
           "Type": "AWS::Lambda::Version",
           "DeletionPolicy": "Retain",
           "Properties": {
             "FunctionName": {
               "Ref": "ApiLambdaFunction"
             },
-            "CodeSha256": "HCeP25OiE9FNw01fTrDfs5gyJ3U6cesgK1GE0T3fUHg="
+            "CodeSha256": "fDrnLlusr/BBzz8Y39h5c3m4UxtvQ9dF1ZsphF16KYs="
+          }
+        },
+        "ApiEventsRuleSchedule1": {
+          "Type": "AWS::Events::Rule",
+          "Properties": {
+            "ScheduleExpression": "rate(2 minutes)",
+            "State": "ENABLED",
+            "Targets": [
+              {
+                "Input": "{\"source\":\"aws.events\",\"detail-type\":\"Scheduled Event\",\"action\":\"warmup\"}",
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "ApiLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Id": "apiSchedule"
+              }
+            ]
+          }
+        },
+        "ApiLambdaPermissionEventsRuleSchedule1": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "ApiLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "events.amazonaws.com",
+            "SourceArn": {
+              "Fn::GetAtt": [
+                "ApiEventsRuleSchedule1",
+                "Arn"
+              ]
+            }
           }
         },
         "HttpApi": {
@@ -1104,7 +1231,7 @@
         "ApiLambdaFunctionQualifiedArn": {
           "Description": "Current Lambda function version",
           "Value": {
-            "Ref": "ApiLambdaVersion907m6xpAeu2Aw7sIlH5QRHf0sJd6L2mrrawvneLl4"
+            "Ref": "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM"
           },
           "Export": {
             "Name": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"
