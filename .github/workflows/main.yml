@@ -78,7 +78,7 @@ jobs:
         run: npm ci
 
       - name: Install Serverless Framework CLI
-        run: npm install -g serverless
+        run: npm install -g serverless@3.40.0
 
       # 🔐
       - name: Configure AWS Credentials via IAM OIDC
