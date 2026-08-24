@@ -129,6 +129,7 @@ jobs:
           
           echo "✅ Updating README.md with URL: $API_URL"
           sed -i "s|https://[^)]*execute-api\.us-east-1\.amazonaws\.com/dev/|${API_URL}|" README.md
+          sed -i "s|baseUrl: '.*'|baseUrl: '${API_URL}'|" cypress.config.js
 
       - name: Commit and Push changes
         run: |

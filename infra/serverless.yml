@@ -24,22 +24,21 @@ provider:
         - POST
   environment:
     API_KEY: ${env:API_KEY}
-    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://3.83.136.67:9090/api/v1/otlp"
+    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://${env:OTEL_EXPORTER_IP}:9090/api/v1/otlp"
     OTEL_EXPORTER_OTLP_METRICS_PROTOCOL: "http/protobuf"
     OTEL_METRICS_EXPORTER: "otlp"
     OTEL_METRIC_EXPORT_INTERVAL: "5000"
     OTEL_METRIC_EXPORT_TIMEOUT: "3000"
     OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "CUMULATIVE"
     OTEL_SERVICE_NAME: "foodmania-api"
+    OTEL_EXPORTER_PROMETHEUS_WITHOUT_UNITS: true
 
-# ACTIVA ESBUILD NATIVO: Elimina código muerto, reduce tamaño de dependencias y unifica todo.
 build:
   esbuild:
     bundle: true
     minify: true
     sourcemap: false
-    # Obliga a esbuild a mantener a Pug como dependencia externa dinámica.
-    # Las plantillas Pug necesitan compilarse en tiempo de ejecución de Node, no por esbuild.
+
     external:
       - pug
 

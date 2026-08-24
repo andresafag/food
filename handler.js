@@ -29,7 +29,7 @@ function initOtel() {
 
   meterProvider = new MeterProvider({
     resource: resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'foodmania-api',
+      [ATTR_SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'foodmania',
     }),
     readers: [reader],
   });
@@ -49,28 +49,29 @@ try {
 // ---------------------------------------------------------------------------
 let meter;
 let requestCounter;
-let warmupCounter; // 🚀 Nuevo contador para pings de EventBridge
+let warmupCounter;
 let errorCounter;
 let responseHistogram;
 
 try {
   meter = metrics.getMeter('foodmania');
   
-  requestCounter = meter.createCounter('foodmania_http_requests_total', {
+  requestCounter = meter.createCounter('http_requests_total', {
     description: 'Total HTTP requests handled by the Lambda function',
   });
 
-  warmupCounter = meter.createCounter('foodmania_warmup_requests_total', {
+  warmupCounter = meter.createCounter('warmup_requests_total', {
     description: 'Total EventBridge warmup heartbeats handled by Lambda',
   });
 
-  errorCounter = meter.createCounter('foodmania_errors_total', {
+  errorCounter = meter.createCounter('http_errors_total', {
     description: 'Total unhandled errors or 5xx responses in Lambda',
   });
 
-  responseHistogram = meter.createHistogram('foodmania_http_response_duration_ms', {
-    description: 'HTTP response latency in milliseconds',
-    unit: 'ms',
+  // FIX 1: Name changed to http_request_duration, unit set to 's'
+  responseHistogram = meter.createHistogram('http_request_duration', {
+    description: 'HTTP response latency in seconds',
+    unit: 's',
   });
 } catch (err) {
   console.warn('Metrics creation failed — using no-op metrics:', err && err.message ? err.message : err);
@@ -86,11 +87,9 @@ try {
 let serverlessExpressInstance;
 
 module.exports.handler = async (event, context) => {
-  // 🚀 1. DETECCIÓN DE WARMUP / HEARTBEAT DE EVENTBRIDGE
   if (event.action === 'warmup' || event['detail-type'] === 'Scheduled Event') {
     console.log('Heartbeat de EventBridge recibido — manteniendo Lambda caliente.');
     
-    // Incrementamos el contador de warmup y el contador general para refrescar la métrica en Prometheus
     warmupCounter.add(1, { source: 'eventbridge' });
     requestCounter.add(1, { method: 'WARMUP', path: '/warmup', status: '200' });
     
@@ -108,9 +107,6 @@ module.exports.handler = async (event, context) => {
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // 2. MANEJO NORMAL DE PETICIONES HTTP
-  // ---------------------------------------------------------------------------
   const startTime = Date.now();
 
   if (!serverlessExpressInstance) {
@@ -127,6 +123,8 @@ module.exports.handler = async (event, context) => {
   }
 
   const durationMs = Date.now() - startTime;
+  // FIX 2: Convert milliseconds to seconds before recording
+  const durationSeconds = durationMs / 1000;
   
   const httpMethod = event.httpMethod || (event.requestContext && event.requestContext.http && event.requestContext.http.method) || 'UNKNOWN';
   const requestPath = event.path || (event.requestContext && event.requestContext.http && event.requestContext.http.path) || '/';
@@ -139,7 +137,7 @@ module.exports.handler = async (event, context) => {
   };
 
   requestCounter.add(1, labels);
-  responseHistogram.record(durationMs, labels);
+  responseHistogram.record(durationSeconds, labels);
 
   if (statusCode >= 400) {
     errorCounter.add(1, {
