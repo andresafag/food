@@ -130,7 +130,7 @@ module.exports.handler = async (event, context) => {
   const statusCode = response ? (response.statusCode || 200) : 500;
 
   const labels = {
-    job: process.env.OTEL_SERVICE_NAME || 'foodmania',
+    service: process.env.OTEL_SERVICE_NAME || 'foodmania',
     method: httpMethod,
     path: requestPath,
     status: String(statusCode),
