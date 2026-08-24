@@ -45,7 +45,6 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: ./
-          config: baseUrl=https://itse8cfhej.execute-api.us-east-1.amazonaws.com/
 
       - name: Upload Cypress Artifacts
         if: always()
@@ -91,7 +90,7 @@ jobs:
       - name: Inject Secrets into Environment File
         run: |
           echo "API_KEY=${{ secrets.API_KEY }}" > .env
-          echo "API_URL=${{ secrets.OTEL_EXPORTER_IP}}" >> .env
+          echo "OTEL_EXPORTER_IP=${{ secrets.OTEL_EXPORTER_IP}}" >> .env
 
       - name: Deploy to AWS Cloud
         id: deploy
