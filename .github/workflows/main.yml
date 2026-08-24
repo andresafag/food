@@ -91,6 +91,7 @@ jobs:
       - name: Inject Secrets into Environment File
         run: |
           echo "API_KEY=${{ secrets.API_KEY }}" > .env
+          echo "API_URL=${{ secrets.OTEL_EXPORTER_IP}}" >> .env
 
       - name: Deploy to AWS Cloud
         id: deploy
