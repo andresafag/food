@@ -90,8 +90,8 @@ module.exports.handler = async (event, context) => {
   if (event.action === 'warmup' || event['detail-type'] === 'Scheduled Event') {
     console.log('Heartbeat de EventBridge recibido — manteniendo Lambda caliente.');
     
-    warmupCounter.add(1, { source: 'eventbridge' });
-    requestCounter.add(1, { method: 'WARMUP', path: '/warmup', status: '200' });
+    warmupCounter.add(1, { job: 'foodmania', source: 'eventbridge' });
+    requestCounter.add(1, { job: 'foodmania', method: 'WARMUP', path: '/warmup', status: '200' });
     
     if (meterProvider) {
       try {
@@ -123,7 +123,6 @@ module.exports.handler = async (event, context) => {
   }
 
   const durationMs = Date.now() - startTime;
-  // FIX 2: Convert milliseconds to seconds before recording
   const durationSeconds = durationMs / 1000;
   
   const httpMethod = event.httpMethod || (event.requestContext && event.requestContext.http && event.requestContext.http.method) || 'UNKNOWN';
@@ -131,6 +130,7 @@ module.exports.handler = async (event, context) => {
   const statusCode = response ? (response.statusCode || 200) : 500;
 
   const labels = {
+    job: process.env.OTEL_SERVICE_NAME || 'foodmania',
     method: httpMethod,
     path: requestPath,
     status: String(statusCode),
@@ -141,6 +141,7 @@ module.exports.handler = async (event, context) => {
 
   if (statusCode >= 400) {
     errorCounter.add(1, {
+      job: process.env.OTEL_SERVICE_NAME || 'foodmania',
       method: httpMethod,
       path: requestPath,
       status: String(statusCode),
