@@ -91,7 +91,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-          "S3Key": "serverless/express-pug-app/dev/1787453297807-2026-08-23T02:48:17.807Z/express-pug-app-api.zip"
+          "S3Key": "serverless/express-pug-app/dev/1788495123719-2026-09-04T04:12:03.719Z/express-pug-app-api.zip"
         },
         "Handler": "handler.handler",
         "Runtime": "nodejs20.x",
@@ -107,7 +107,8 @@
             "OTEL_METRIC_EXPORT_INTERVAL": "5000",
             "OTEL_METRIC_EXPORT_TIMEOUT": "3000",
             "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE": "CUMULATIVE",
-            "OTEL_SERVICE_NAME": "foodmania-api"
+            "OTEL_SERVICE_NAME": "foodmania-api",
+            "OTEL_EXPORTER_PROMETHEUS_WITHOUT_UNITS": "true"
           }
         },
         "Role": {
@@ -121,14 +122,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM": {
+    "ApiLambdaVersionCcMnLFBAVhcWE9lvmyv2I9LheSBwuAWQFsDi7Bz5dA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "fDrnLlusr/BBzz8Y39h5c3m4UxtvQ9dF1ZsphF16KYs="
+        "CodeSha256": "BdRmsam0ZnCQL3P/m/B3IAjWC1AA8pH6B8jm/K3Kfuc="
       }
     },
     "ApiEventsRuleSchedule1": {
@@ -313,7 +314,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionDqI3EDrke4nMZNUkOzaenfF8hmL7eJUk7ewx8ZM"
+        "Ref": "ApiLambdaVersionCcMnLFBAVhcWE9lvmyv2I9LheSBwuAWQFsDi7Bz5dA"
       },
       "Export": {
         "Name": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"
