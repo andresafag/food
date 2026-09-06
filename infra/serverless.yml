@@ -3,6 +3,7 @@ app: my-app
 service: express-pug-app
 useDotenv: true
 
+
 provider:
   name: aws
   runtime: nodejs20.x
@@ -59,6 +60,14 @@ functions:
             source: 'aws.events'
             detail-type: 'Scheduled Event'
             action: 'warmup'
+
+resources:
+  Resources:
+    ApiLogGroup:
+      Type: AWS::Logs::LogGroup
+      Properties:
+        RetentionInDays: 7
+      DeletionPolicy: Retain
 
 package:
   individually: true

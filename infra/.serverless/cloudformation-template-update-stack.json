@@ -5,8 +5,10 @@
     "ApiLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/express-pug-app-dev-api"
-      }
+        "LogGroupName": "/aws/lambda/express-pug-app-dev-api",
+        "RetentionInDays": 7
+      },
+      "DeletionPolicy": "Retain"
     },
     "IamRoleLambdaExecution": {
       "Type": "AWS::IAM::Role",
@@ -91,7 +93,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-          "S3Key": "serverless/express-pug-app/dev/1788495123719-2026-09-04T04:12:03.719Z/express-pug-app-api.zip"
+          "S3Key": "serverless/express-pug-app/dev/1788714122722-2026-09-06T17:02:02.722Z/express-pug-app-api.zip"
         },
         "Handler": "handler.handler",
         "Runtime": "nodejs20.x",
@@ -122,14 +124,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionCcMnLFBAVhcWE9lvmyv2I9LheSBwuAWQFsDi7Bz5dA": {
+    "ApiLambdaVersionnrn7APBpTqOiDpTQPELNHuhqUB240Ror4L2O0zTViR4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "BdRmsam0ZnCQL3P/m/B3IAjWC1AA8pH6B8jm/K3Kfuc="
+        "CodeSha256": "YLjOymgW0jxn4qzgLSh0yKekhDDwbDYT3aC13nNCUjo="
       }
     },
     "ApiEventsRuleSchedule1": {
@@ -314,7 +316,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionCcMnLFBAVhcWE9lvmyv2I9LheSBwuAWQFsDi7Bz5dA"
+        "Ref": "ApiLambdaVersionnrn7APBpTqOiDpTQPELNHuhqUB240Ror4L2O0zTViR4"
       },
       "Export": {
         "Name": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"

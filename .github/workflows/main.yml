@@ -65,7 +65,6 @@ jobs:
   continuous-deployment:
 
     name: Deploy to AWS Lambda via OIDC
-    needs: continuous-integration
     runs-on: ubuntu-latest
 
     steps:
