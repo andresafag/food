@@ -168,20 +168,20 @@
     "userName": "andresafag",
     "serviceProviderAwsAccountId": "688567305851",
     "serviceProviderAwsCfStackName": "express-pug-app-dev",
-    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:688567305851:stack/express-pug-app-dev/b2ef4890-aa14-11f1-b9c5-0affe3d85951",
-    "serviceProviderAwsCfStackCreated": "2026-09-06T17:02:10.434Z",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:688567305851:stack/express-pug-app-dev/43452250-aa17-11f1-89a8-0affc718b2a5",
+    "serviceProviderAwsCfStackCreated": "2026-09-06T17:20:31.585Z",
     "serviceProviderAwsCfStackUpdated": null,
     "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
         "OutputKey": "ApiLambdaFunctionQualifiedArn",
-        "OutputValue": "arn:aws:lambda:us-east-1:688567305851:function:express-pug-app-dev-api:114",
+        "OutputValue": "arn:aws:lambda:us-east-1:688567305851:function:express-pug-app-dev-api:115",
         "Description": "Current Lambda function version",
         "ExportName": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"
       },
       {
         "OutputKey": "HttpApiId",
-        "OutputValue": "tibwe60gn9",
+        "OutputValue": "04nm4i16hi",
         "Description": "Id of the HTTP API",
         "ExportName": "sls-express-pug-app-dev-HttpApiId"
       },
@@ -192,7 +192,7 @@
       },
       {
         "OutputKey": "HttpApiUrl",
-        "OutputValue": "https://tibwe60gn9.execute-api.us-east-1.amazonaws.com",
+        "OutputValue": "https://04nm4i16hi.execute-api.us-east-1.amazonaws.com",
         "Description": "URL of the HTTP API",
         "ExportName": "sls-express-pug-app-dev-HttpApiUrl"
       }

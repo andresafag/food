@@ -93,7 +93,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-          "S3Key": "serverless/express-pug-app/dev/1788714122722-2026-09-06T17:02:02.722Z/express-pug-app-api.zip"
+          "S3Key": "serverless/express-pug-app/dev/1788715224597-2026-09-06T17:20:24.597Z/express-pug-app-api.zip"
         },
         "Handler": "handler.handler",
         "Runtime": "nodejs20.x",
