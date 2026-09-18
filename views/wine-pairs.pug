@@ -238,10 +238,11 @@ html(lang="en")
     script(src="./hamburgerMenu.js")
     script.
       const apiKey = !{JSON.stringify(apiKey || '')};
+      const wineForm = document.querySelector('#wine-form');
       const foodInput = document.querySelector('#food');
       const priceInput = document.querySelector('#maxPrice');
-      const searchWine = document.querySelector('#search-wine');
-      const contentForWine = document.querySelector('#wineResults');
+      const searchWine = document.querySelector('#submit');
+      const contentForWine = document.querySelector('#contentForWine');
       const tooltipText = document.querySelector('.tooltiptext');
 
       function showError(message) {
@@ -314,4 +315,4 @@ html(lang="en")
         }
       }
 
-      searchWine.addEventListener('click', searchHandler);
+      wineForm.addEventListener('submit', searchHandler);
