@@ -223,35 +223,22 @@ html(lang="en")
     include components/footer
     script(src="./hamburgerMenu.js")
     script.
-      const IMG_BASE = 'https://spoonacular.com/recipeImages/';
-      const DAYS = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
-
-      let timeFrameInput   = document.querySelector('#timeFrame'),
-          targetCaloriesInput = document.querySelector('#targetCalories'),
-          dietInput        = document.querySelector('#diet'),
-          excludeInput     = document.querySelector('#exclude'),
-          mealPlanContent  = document.querySelector('#mealPlanContent'),
-          generatePlanBtn  = document.querySelector('#generatePlan'),
-          tooltipText      = document.querySelector('.tooltiptext');
+      const apiKey = !{JSON.stringify(apiKey || '')};
+      const generatePlanBtn = document.querySelector('#generate-plan');
+      const timeFrameInput = document.querySelector('#timeFrame');
+      const targetCaloriesInput = document.querySelector('#targetCalories');
+      const dietInput = document.querySelector('#diet');
+      const excludeInput = document.querySelector('#exclude');
+      const mealPlanContent = document.querySelector('#meal-plan-content');
+      const tooltipText = document.querySelector('.tooltiptext');
 
       function mealCardHTML(meal) {
-        const imgSrc = meal.image
-          ? (meal.image.startsWith('http') ? meal.image : IMG_BASE + meal.image)
-          : '';
-        const imgTag = imgSrc ? `<img src="${imgSrc}" alt="${meal.title}" class="recipeimg" />` : '';
         return `
-          <div class="mainfoodcontainer">
-            <div class="foodContentboxTittle">
-              <div class="title">${meal.title}</div>
-            </div>
-            <div class="adittionalContent">
-              <p>Ready in: ${meal.readyInMinutes} minutes</p>
-              <p>Servings: ${meal.servings}</p>
-            </div>
-            <div class="foodContent">
-              ${imgTag}
-              ${meal.sourceUrl ? `<p><a href="${meal.sourceUrl}" target="_blank">View full recipe</a></p>` : ''}
-            </div>
+          <div class="meal-card">
+            <h3>${meal.title}</h3>
+            <p><strong>Ready in:</strong> ${meal.readyInMinutes} minutes</p>
+            <p><strong>Servings:</strong> ${meal.servings}</p>
+            <img src="https://spoonacular.com/recipeImages/${meal.image}" alt="${meal.title}" />
           </div>
         `;
       }
@@ -297,18 +284,16 @@ html(lang="en")
         if (dietInput.value)    params.diet    = dietInput.value;
         if (excludeInput.value) params.exclude = excludeInput.value;
 
-        let url = `https://api.spoonacular.com/mealplanner/generate?${new URLSearchParams(params)}&apiKey=#{apiKey}`;
+        let url = `https://api.spoonacular.com/mealplanner/generate?${new URLSearchParams(params)}&apiKey=${apiKey}`;
 
         mealPlanContent.innerHTML = '<p class="planMessage">Generating your meal plan…</p>';
 
         fetch(url)
           .then(r => r.json())
           .then(data => {
-            // day response → { meals: [...], nutrients: {} }
             if (data.meals) {
               mealPlanContent.innerHTML = renderDay(data.meals);
             }
-            // week response → { week: { monday: { meals: [...] }, ... } }
             else if (data.week) {
               mealPlanContent.innerHTML = renderWeek(data.week);
             }

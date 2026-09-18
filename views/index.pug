@@ -32,9 +32,9 @@ html(lang="en")
     include components/footer
 script(src="./hamburgerMenu.js")
 script.
+  const apiKey = !{JSON.stringify(apiKey || '')};
   window.onload = randomp;
   var pic_rand = ["./images/merengue.jpg", "./images/pasta.jpg", "./images/smoothie.jpg"];
-  
   function randomp(){
     var randomNum = Math.floor(Math.random() * pic_rand.length);
     document.getElementById("imge").src = pic_rand[randomNum];
@@ -110,7 +110,7 @@ script.
 
       try{
         const q = encodeURIComponent(foodInput.value.trim());
-        const searchRes = await fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${q}&number=10&apiKey=#{apiKey}`);
+        const searchRes = await fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${q}&number=10&apiKey=${apiKey}`);
         const searchJson = await searchRes.json();
         console.log('searchJson', searchJson);
         if(!searchJson.results || searchJson.results.length === 0){
@@ -122,7 +122,7 @@ script.
         }
 
         const ids = searchJson.results.map(r => r.id);
-        const details = await Promise.all(ids.map(id => fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=#{apiKey}`).then(r=>r.json())));
+        const details = await Promise.all(ids.map(id => fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${apiKey}`).then(r=>r.json())));
         console.log('details', details);
         contentForFood.innerHTML = details.map(d => mealCardHTML(d)).join('');
       }catch(err){

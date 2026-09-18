@@ -9,11 +9,13 @@ app.set('port', process.env.PORT || 3000);
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug')
-app.enable('view cache');
+if (process.env.NODE_ENV !== 'production') {
+  app.disable('view cache');
+}
 
 require('dotenv').config()
 
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.SPOONACULAR_API_KEY || process.env.API_KEY;
 
 router
   .get('/', function(req, res){
@@ -37,7 +39,6 @@ router
 
 
 app.use(router)
-// app.listen(app.get('port'), function(){
-//     console.log("Connecting to port: ", app.get('port'))
-//   });
+
 module.exports = app;
+

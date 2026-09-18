@@ -278,6 +278,7 @@ html(lang="en")
     include components/footer
     script(src="./hamburgerMenu.js")
     script.
+      const apiKey = !{JSON.stringify(apiKey || '')};
       const menuForm = document.querySelector('#menu-search-form');
       const menuResults = document.querySelector('#menuResults');
 
@@ -297,7 +298,7 @@ html(lang="en")
         });
         const addInfo = document.querySelector('#addMenuItemInformation').checked;
         if (addInfo) params.append('addMenuItemInformation', 'true');
-        const url = `https://api.spoonacular.com/food/menuItems/search?${params.toString()}&apiKey=#{apiKey}`;
+        const url = `https://api.spoonacular.com/food/menuItems/search?${params.toString()}&apiKey=${apiKey}`;
         menuResults.innerHTML = '<p>Searching menu items…</p>';
         fetch(url)
           .then(response => response.json())

@@ -31,6 +31,7 @@ html(lang="en")
     include components/footer
 script(src="./hamburgerMenu.js")
 script.
+  const apiKey = !{JSON.stringify(apiKey || '')};
   var pic_rand = ["./images/merengue.jpg", "./images/pasta.jpg", "./images/smoothie.jpg"];
 
   function randomp(){
@@ -43,7 +44,7 @@ script.
   const contentForFood = document.querySelector('#contentForFood'),
         searchFood = document.querySelector('#submit'),
         tooltipText = document.querySelector('.tooltiptext'),
-        randomRecipeEndpoint = `https://api.spoonacular.com/recipes/random?number=1&apiKey=#{apiKey}`;
+        randomRecipeEndpoint = `https://api.spoonacular.com/recipes/random?number=1&apiKey=${apiKey}`;
 
   function nutrientFrom(respon, key){
     if(!respon || !respon.nutrition || !respon.nutrition.nutrients) return 0;

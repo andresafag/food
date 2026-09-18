@@ -93,7 +93,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-04ad7e43-722d",
-          "S3Key": "serverless/express-pug-app/dev/1788715224597-2026-09-06T17:20:24.597Z/express-pug-app-api.zip"
+          "S3Key": "serverless/express-pug-app/dev/1789746990443-2026-09-18T15:56:30.443Z/express-pug-app-api.zip"
         },
         "Handler": "handler.handler",
         "Runtime": "nodejs20.x",
@@ -102,15 +102,7 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
-            "API_KEY": "4c17e459cfec4721a0f4ac09605d1daf",
-            "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "http://3.83.136.67:9090/api/v1/otlp",
-            "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL": "http/protobuf",
-            "OTEL_METRICS_EXPORTER": "otlp",
-            "OTEL_METRIC_EXPORT_INTERVAL": "5000",
-            "OTEL_METRIC_EXPORT_TIMEOUT": "3000",
-            "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE": "CUMULATIVE",
-            "OTEL_SERVICE_NAME": "foodmania-api",
-            "OTEL_EXPORTER_PROMETHEUS_WITHOUT_UNITS": "true"
+            "API_KEY": "3b2bf88a8a9441b6adc87e68c13407be"
           }
         },
         "Role": {
@@ -124,14 +116,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionnrn7APBpTqOiDpTQPELNHuhqUB240Ror4L2O0zTViR4": {
+    "ApiLambdaVersionHvJljOtzpBF6Rniq8WBbvchcts87sEpRv6k3yJUnE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "YLjOymgW0jxn4qzgLSh0yKekhDDwbDYT3aC13nNCUjo="
+        "CodeSha256": "SUm0B/8V8V74DSib3UCsulF7XRLXuuHCUx9SS7qq5CI="
       }
     },
     "ApiEventsRuleSchedule1": {
@@ -316,7 +308,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionnrn7APBpTqOiDpTQPELNHuhqUB240Ror4L2O0zTViR4"
+        "Ref": "ApiLambdaVersionHvJljOtzpBF6Rniq8WBbvchcts87sEpRv6k3yJUnE"
       },
       "Export": {
         "Name": "sls-express-pug-app-dev-ApiLambdaFunctionQualifiedArn"

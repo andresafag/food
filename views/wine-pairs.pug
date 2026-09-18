@@ -237,84 +237,81 @@ html(lang="en")
     include components/footer
     script(src="./hamburgerMenu.js")
     script.
-      (function(){
-        const foodInput      = document.querySelector('#food'),
-              priceInput     = document.querySelector('#maxPrice'),
-              contentForWine = document.querySelector('#contentForWine'),
-              searchWine     = document.querySelector('#submit'),
-              tooltipText    = document.querySelector('.tooltiptext');
+      const apiKey = !{JSON.stringify(apiKey || '')};
+      const foodInput = document.querySelector('#food');
+      const priceInput = document.querySelector('#maxPrice');
+      const searchWine = document.querySelector('#search-wine');
+      const contentForWine = document.querySelector('#wineResults');
+      const tooltipText = document.querySelector('.tooltiptext');
 
-        function showError(msg) {
-          tooltipText.innerHTML = msg;
-          tooltipText.style.visibility = 'visible';
-          setTimeout(() => tooltipText.style.visibility = 'hidden', 3000);
-        }
+      function showError(message) {
+        tooltipText.innerHTML = message;
+        tooltipText.style.visibility = 'visible';
+        setTimeout(() => tooltipText.style.visibility = 'hidden', 3000);
+      }
 
-        function renderResult(res) {
-          if (!res) return '<p class="planMessage">No pairing result.</p>';
-          let productHtml = '';
-
-          if (Array.isArray(res.productMatches) && res.productMatches.length) {
-            productHtml = res.productMatches.map(p => {
-              const img = p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.title}" class="recipeimg" />` : '';
-              const buy = p.link ? `<p><a href="${p.link}" target="_blank">Buy</a></p>` : '';
-              const price = p.price ? `<p><strong>Price:</strong> ${p.price}</p>` : '';
-              const description = p.description ? `<p>${p.description}</p>` : '';
+      function renderResult(res) {
+        const productHtml = Array.isArray(res.pairedWines) && res.pairedWines.length
+          ? res.pairedWines.map((wine) => {
+              const product = res.productMatches && res.productMatches.find(p => p.title === wine);
+              const img = product && product.imageUrl ? `<img src="${product.imageUrl}" alt="${product.title}" />` : '';
+              const buy = product && product.link ? `<p><a href="${product.link}" target="_blank">Buy</a></p>` : '';
+              const price = product && product.price ? `<p><strong>Price:</strong> ${product.price}</p>` : '';
+              const description = product && product.description ? `<p>${product.description}</p>` : '';
               return `
                 <div class="foodContent" style="margin-bottom:1rem;">
                   ${img}
                   <div class="adittionalContent">
-                    <h4>${p.title}</h4>
+                    <h4>${product ? product.title : wine}</h4>
                     ${description}
                     ${price}
                     ${buy}
                   </div>
                 </div>
               `;
-            }).join('');
-          }
+            }).join('')
+          : '';
 
-          return `
-            <div class="mainfoodcontainer">
-              <div class="foodContentboxTittle">
-                <div class="title">Wine Pairing Result</div>
-              </div>
-              <div class="adittionalContent">
-                ${res.pairingText ? `<p>${res.pairingText}</p>` : '<p>No pairing text available.</p>'}
-              </div>
-              <div class="foodContent">
-                ${productHtml || '<p>No recommended wines available.</p>'}
-              </div>
+        return `
+          <div class="mainfoodcontainer">
+            <div class="foodContentboxTittle">
+              <div class="title">Wine Pairing Result</div>
             </div>
-          `;
+            <div class="adittionalContent">
+              ${res.pairingText ? `<p>${res.pairingText}</p>` : '<p>No pairing text available.</p>'}
+            </div>
+            <div class="foodContent">
+              ${productHtml || '<p>No recommended wines available.</p>'}
+            </div>
+          </div>
+        `;
+      }
+
+      async function searchHandler(e) {
+        e.preventDefault();
+        if (!foodInput.value.trim()) {
+          showError("Please enter a food, dish or cuisine.");
+          return;
         }
 
-        async function searchHandler(e) {
-          e.preventDefault();
-          if (!foodInput.value.trim()) {
-            showError("Please enter a food, dish or cuisine.");
+        contentForWine.innerHTML = '<p class="planMessage">Searching for wine pairings…</p>';
+
+        try {
+          const q         = encodeURIComponent(foodInput.value.trim());
+          const maxPrice  = priceInput.value ? `&maxPrice=${encodeURIComponent(priceInput.value)}` : '';
+          const res       = await fetch(`https://api.spoonacular.com/food/wine/pairing?food=${q}${maxPrice}&apiKey=${apiKey}`);
+          const json      = await res.json();
+
+          if (json.status === 'failure') {
+            showError(json.message || 'No pairing found for that food.');
+            contentForWine.innerHTML = '<p class="planMessage">Find the perfect wine for your dish.</p>';
             return;
           }
 
-          contentForWine.innerHTML = '<p class="planMessage">Searching for wine pairings…</p>';
-
-          try {
-            const q         = encodeURIComponent(foodInput.value.trim());
-            const maxPrice  = priceInput.value ? `&maxPrice=${encodeURIComponent(priceInput.value)}` : '';
-            const res       = await fetch(`https://api.spoonacular.com/food/wine/pairing?food=${q}${maxPrice}&apiKey=#{apiKey}`);
-            const json      = await res.json();
-
-            if (json.status === 'failure') {
-              showError(json.message || 'No pairing found for that food.');
-              contentForWine.innerHTML = '<p class="planMessage">Find the perfect wine for your dish.</p>';
-              return;
-            }
-
-            contentForWine.innerHTML = renderResult(json);
-          } catch(err) {
-            showError("Error: " + err.message);
-          }
+          contentForWine.innerHTML = renderResult(json);
+        } catch(err) {
+          showError("Error: " + err.message);
         }
+      }
 
-        searchWine.addEventListener('click', searchHandler);
-      })();
+      searchWine.addEventListener('click', searchHandler);
