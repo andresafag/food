@@ -224,21 +224,25 @@ html(lang="en")
     script(src="./hamburgerMenu.js")
     script.
       const apiKey = !{JSON.stringify(apiKey || '')};
-      const generatePlanBtn = document.querySelector('#generate-plan');
+      const plannerForm = document.querySelector('#planner-form');
+      const generatePlanBtn = document.querySelector('#generatePlan');
       const timeFrameInput = document.querySelector('#timeFrame');
       const targetCaloriesInput = document.querySelector('#targetCalories');
       const dietInput = document.querySelector('#diet');
       const excludeInput = document.querySelector('#exclude');
-      const mealPlanContent = document.querySelector('#meal-plan-content');
+      const mealPlanContent = document.querySelector('#mealPlanContent');
       const tooltipText = document.querySelector('.tooltiptext');
+      const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
       function mealCardHTML(meal) {
         return `
-          <div class="meal-card">
-            <h3>${meal.title}</h3>
-            <p><strong>Ready in:</strong> ${meal.readyInMinutes} minutes</p>
-            <p><strong>Servings:</strong> ${meal.servings}</p>
+          <div class="meal-item-card">
             <img src="https://spoonacular.com/recipeImages/${meal.image}" alt="${meal.title}" />
+            <div>
+              <h2>${meal.title}</h2>
+              <p><strong>Ready in:</strong> ${meal.readyInMinutes} minutes</p>
+              <p><strong>Servings:</strong> ${meal.servings}</p>
+            </div>
           </div>
         `;
       }
@@ -249,8 +253,9 @@ html(lang="en")
 
       function renderWeek(week) {
         return DAYS.map(day => {
-          if (!week[day]) return '';
-          const { meals, nutrients } = week[day];
+          const key = day.toLowerCase();
+          if (!week[key]) return '';
+          const { meals, nutrients } = week[key];
           const nutrientBar = nutrients ? `
             <div class="week-nutrients">
               <span><b>Calories:</b> ${Math.round(nutrients.calories)} kcal</span>
@@ -267,7 +272,7 @@ html(lang="en")
         }).join('');
       }
 
-      generatePlanBtn.addEventListener('click', function(e) {
+      plannerForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
         if (!targetCaloriesInput.value) {
@@ -277,14 +282,14 @@ html(lang="en")
           return;
         }
 
-        let params = {
+        const params = {
           timeFrame: timeFrameInput.value,
           targetCalories: targetCaloriesInput.value
         };
-        if (dietInput.value)    params.diet    = dietInput.value;
+        if (dietInput.value) params.diet = dietInput.value;
         if (excludeInput.value) params.exclude = excludeInput.value;
 
-        let url = `https://api.spoonacular.com/mealplanner/generate?${new URLSearchParams(params)}&apiKey=${apiKey}`;
+        const url = `https://api.spoonacular.com/mealplanner/generate?${new URLSearchParams(params)}&apiKey=${apiKey}`;
 
         mealPlanContent.innerHTML = '<p class="planMessage">Generating your meal plan…</p>';
 
