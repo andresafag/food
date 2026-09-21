@@ -1,0 +1,173 @@
+html(lang="en")
+  head
+    title= "Random Recipe"
+    link(rel="stylesheet", href="./styles.css", type="text/css")
+    link(rel='preconnect' href='https://fonts.googleapis.com')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+    link(href='https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Fugaz+One&family=Grape+Nuts&family=Pangolin&display=swap' rel='stylesheet')
+    script(src='https://kit.fontawesome.com/adf65eea78.js' crossorigin='anonymous')
+  body  
+    nav
+      include components/nav.pug
+    section(id="submit_section")
+      div(id="form-section")
+        div
+          form
+            div(id="send-info")
+              div(class="food-title")
+                h2 Search recipes by ingredients
+              // human-language ingredients input
+              input(type="text", id="ingredientsInput", name="ingredients", placeholder="e.g. apples, flour, sugar")
+              span.tooltiptext
+              // change to button to avoid form navigation and keep input visible
+              input(type="button", id="submit", value="Get awesome recipes")
+              i.fa-solid.fa-dice
+              span.tooltiptext
+      article 
+        div(id="contentForFood")
+          img(alt="welcomeimg", id="imge")
+    include components/footer
+script(src="./ai.js")
+script.
+  const apiKey = !{JSON.stringify(apiKey || '')};
+  const deepseekAvailable = !{JSON.stringify(deepseekAvailable || false)};
+  (function(){
+    const ingredientsInput = document.querySelector('#ingredientsInput'),
+          contentForFood = document.querySelector('#contentForFood'),
+          searchBtn = document.querySelector('#submit'),
+          tooltipText = document.querySelector('.tooltiptext');
+
+    // Prepare a container where the AI response will be placed
+    const aiResponseContainer = document.createElement('div');
+    aiResponseContainer.id = 'aiResponse';
+    aiResponseContainer.style.marginTop = '1rem';
+    const formSection = document.getElementById('form-section');
+    formSection.appendChild(aiResponseContainer);
+
+    async function handleSubmit(e){
+      e.preventDefault();
+      const raw = (ingredientsInput && ingredientsInput.value) ? ingredientsInput.value.trim() : '';
+      if(!raw){
+        tooltipText.innerHTML = "Please enter some ingredients";
+        tooltipText.style.visibility = 'visible';
+        setTimeout(()=> tooltipText.style.visibility = 'hidden', 2500);
+        return;
+      }
+
+      aiResponseContainer.innerHTML = '<p class="planMessage">Searching…</p>';
+
+      try{
+        // The API expects a comma separated list; the user may type human language, so we pass it directly encoded.
+        const ingredientsParam = encodeURIComponent(raw.replace(/\s*,\s*/g, ', '));
+        const url = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredientsParam}&number=4&apiKey=${apiKey}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        // Hand off to DeepSeek AI model logic implemented in /public/ai.js
+        let humanText = '';
+        if(window.deepseekInterpret && typeof window.deepseekInterpret === 'function'){
+          humanText = await window.deepseekInterpret(data);
+        } else {
+          humanText = JSON.stringify(data, null, 2);
+        }
+
+        // If the interpreter returned an array of per-recipe summaries, render each recipe alongside its image.
+        if(Array.isArray(humanText)){
+          // The first element may be a header like "I found X recipes..."; render it first
+          aiResponseContainer.innerHTML = '';
+          const header = document.createElement('div');
+          header.className = 'ai-output-header';
+          header.innerHTML = String(humanText[0]).replace(/\n/g,'<br/>');
+          aiResponseContainer.appendChild(header);
+
+          // For each recipe summary (starting at index 1), build a small card with text + image
+          const listWrap = document.createElement('div');
+          listWrap.className = 'ai-recipe-list';
+
+          for(let i=1;i<humanText.length-1;i++){
+            const summary = humanText[i];
+            const recipe = data[i-1];
+
+            const card = document.createElement('div');
+            card.className = 'ai-recipe-card';
+
+            const textDiv = document.createElement('div');
+            textDiv.className = 'ai-recipe-text';
+            textDiv.innerHTML = String(summary).replace(/\n/g,'<br/>');
+
+            card.appendChild(textDiv);
+
+            if(recipe && recipe.image){
+              const img = document.createElement('img');
+              img.className = 'ai-recipe-img';
+              img.src = recipe.image;
+              img.alt = recipe.title || '';
+              card.appendChild(img);
+            }
+
+            listWrap.appendChild(card);
+          }
+
+          // Tail note (last element)
+          const tail = humanText[humanText.length-1];
+          const tailDiv = document.createElement('div');
+          tailDiv.className = 'ai-output-tail';
+          tailDiv.innerHTML = String(tail).replace(/\n/g,'<br/>');
+
+          aiResponseContainer.appendChild(listWrap);
+          aiResponseContainer.appendChild(tailDiv);
+
+        } else {
+          // humanText is a string (likely from remote DeepSeek). Strip any "Image: http..." lines so URLs don't show in text
+          const cleaned = String(humanText).replace(/^\s*-?\s*Image:\s*https?:\/\/\S+\s*$/gmi, '');
+          aiResponseContainer.innerHTML = `<div class="ai-output">${cleaned.replace(/\n/g,'<br/>')}</div>`;
+
+          // Render images after the text for the string case
+          if(Array.isArray(data) && data.length){
+            const imagesWrap = document.createElement('div');
+            imagesWrap.className = 'ai-images';
+            imagesWrap.style.display = 'flex';
+            imagesWrap.style.flexWrap = 'wrap';
+            imagesWrap.style.gap = '12px';
+            imagesWrap.style.marginTop = '8px';
+
+            data.forEach((r, idx) => {
+              if(r && r.image){
+                const card = document.createElement('div');
+                card.style.width = '160px';
+                card.style.textAlign = 'center';
+                card.style.fontSize = '0.9rem';
+
+                const img = document.createElement('img');
+                img.src = r.image;
+                img.alt = r.title || `recipe-${idx+1}`;
+                img.style.width = '100%';
+                img.style.borderRadius = '6px';
+                img.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+
+                const caption = document.createElement('div');
+                caption.textContent = r.title || '';
+                caption.style.marginTop = '6px';
+                caption.style.overflow = 'hidden';
+                caption.style.textOverflow = 'ellipsis';
+                caption.style.whiteSpace = 'nowrap';
+
+                card.appendChild(img);
+                card.appendChild(caption);
+                imagesWrap.appendChild(card);
+              }
+            });
+
+            if(imagesWrap.children.length){
+              aiResponseContainer.appendChild(imagesWrap);
+            }
+          }
+        }
+      }catch(err){
+        aiResponseContainer.innerHTML = '<p class="planMessage">Error: ' + err.message + '</p>';
+      }
+    }
+
+    searchBtn.addEventListener('click', handleSubmit);
+  })();

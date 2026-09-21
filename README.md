@@ -2,6 +2,12 @@
 
 ![Foodmania Logo](https://github.com/andresafag/food/blob/master/public/images/foodmania_logo.png "Foodmania Logo")
 
+<!-- Badges -->
+[![Build Status](https://img.shields.io/github/actions/workflow/status/andresafag/food/main.yml?branch=main&label=CI&style=flat-square)](https://github.com/andresafag/food/actions)
+[![License](https://img.shields.io/badge/license-ISC-brightgreen?style=flat-square)](LICENSE)
+[![Node Version](https://img.shields.io/badge/node-%3E=_20.0.0-brightgreen?style=flat-square)](https://nodejs.org/)
+[![Dependencies](https://img.shields.io/librariesio/release/npm/spoonacular?style=flat-square)](https://www.npmjs.com/)
+
 # 🍽️ Foodmania: An Immersive Culinary Experience
 
 Have you ever wondered what ingredients to use or how long it takes to cook certain dishes? My wife certainly has, so I decided to build **Foodmania**—a production-grade serverless web application that helps users discover recipes, cooking techniques, ingredients, and fascinating food facts in one place.
@@ -42,6 +48,24 @@ The application currently exposes six server-rendered routes, each backed by its
 | `GET /wine-pairs` | `wine-pairs.pug` | Wine-pairing suggestions for dishes |
 
 Every route receives the Spoonacular `apiKey` (loaded from the `API_KEY` environment variable) and renders it into the corresponding view for client-side calls to the Spoonacular API.
+
+Recent additions (ingredients view + AI formatting):
+
+- New server-side DeepSeek proxy: `POST /deepseek` — configured by the `DEEPSEEK_API_KEY` and `DEEPSEEK_ENDPOINT` environment variables. When present the server securely forwards an instruction + Spoonacular payload to the DeepSeek endpoint and returns the model output to the client.
+- Client-side integration: `views/ingredients.pug` and `public/ai.js` implement a flow where the user types ingredients, the client calls Spoonacular's `findByIngredients` endpoint, then the reply is interpreted by DeepSeek (via the server proxy) or by a local formatter. The interpreted, human-friendly text is shown inline and each recipe now renders in its own styled card with image.
+- Styling: All UI styles for the AI output and recipe cards live in `public/styles.css` under the `.ai-*` classes.
+
+To enable DeepSeek (optional, recommended for richer human-friendly prose):
+
+1. Set the environment variables in your `.env` or in your hosting environment:
+
+```
+DEEPSEEK_API_KEY=sk_live_...   # your DeepSeek API key
+DEEPSEEK_ENDPOINT=https://api.deepseek.example/v1/interpret
+```
+
+2. Restart the server. When configured, the ingredients view will call `POST /deepseek` (server-side) rather than exposing any secret to the browser.
+
 
 ---
 

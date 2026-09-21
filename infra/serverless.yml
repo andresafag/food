@@ -25,6 +25,8 @@ provider:
         - POST
   environment:
     API_KEY: ${env:API_KEY}
+    DEEPSEEK_API_KEY: ${env:DEEPSEEK_API_KEY}
+    DEEPSEEK_ENDPOINT: ${env:DEEPSEEK_ENDPOINT}
   #   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://${env:OTEL_EXPORTER_IP}:9090/api/v1/otlp"
   #   OTEL_EXPORTER_OTLP_METRICS_PROTOCOL: "http/protobuf"
   #   OTEL_METRICS_EXPORTER: "otlp"
