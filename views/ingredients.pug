@@ -47,7 +47,7 @@ script.
 
     async function handleSubmit(e){
       e.preventDefault();
-      const raw = (ingredientsInput && ingredientsInput.value) ? ingredientsInput.value.trim() : '';
+      const raw = (ingredientsInput && ingredientsInput.value) ? ingredientsInput.value.trim() : ''; 
       if(!raw){
         tooltipText.innerHTML = "Please enter some ingredients";
         tooltipText.style.visibility = 'visible';
