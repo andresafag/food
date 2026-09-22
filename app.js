@@ -13,6 +13,7 @@ app.set('view engine', 'pug')
 app.disable('view cache');
 
 require('dotenv').config()
+const apiKey = process.env.API_KEY
 
 router
   .get('/', function(req, res){
