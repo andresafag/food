@@ -34,7 +34,7 @@ router
     res.render("wine-pairs", {apiKey:apiKey})
   })
   .get('/ingredients', function(req, res){
-    res.render("ingredients", {apiKey:apiKey, deepseekAvailable: !!(deepseekApiKey || deepseekMock)})
+    res.render("ingredients", {apiKey:apiKey})
   })
 
 app.use(router)

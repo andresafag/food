@@ -34,6 +34,7 @@ provider:
   #   OTEL_SERVICE_NAME: "foodmania-api"
   #   OTEL_EXPORTER_PROMETHEUS_WITHOUT_UNITS: true
 
+
 build:
   esbuild:
     bundle: true
