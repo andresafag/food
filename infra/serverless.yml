@@ -3,12 +3,12 @@ app: my-app
 service: express-pug-app
 useDotenv: true
 
-
 provider:
   name: aws
   runtime: nodejs20.x
-  region: us-east-1 
-  stage: dev
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  timeout: 29
   httpApi:
     cors:
       allowedOrigins:
@@ -25,7 +25,10 @@ provider:
         - POST
   environment:
     API_KEY: ${env:API_KEY}
-  #   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://${env:OTEL_EXPORTER_IP}:9090/api/v1/otlp"
+    DEEPSEEK_API_KEY: ${env:DEEPSEEK_API_KEY}
+    DYNAMODB_TABLE_NAME: !Ref SemanticCacheTable
+    SPOONACULAR_CACHE_TABLE: !Ref SpoonacularCacheTable
+    #   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://${env:OTEL_EXPORTER_IP}:9090/api/v1/otlp"
   #   OTEL_EXPORTER_OTLP_METRICS_PROTOCOL: "http/protobuf"
   #   OTEL_METRICS_EXPORTER: "otlp"
   #   OTEL_METRIC_EXPORT_INTERVAL: "5000"
@@ -34,13 +37,33 @@ provider:
   #   OTEL_SERVICE_NAME: "foodmania-api"
   #   OTEL_EXPORTER_PROMETHEUS_WITHOUT_UNITS: true
 
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+          Resource:
+            - !GetAtt SemanticCacheTable.Arn
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:DeleteItem
+          Resource:
+            - !GetAtt SpoonacularCacheTable.Arn
 
 build:
   esbuild:
     bundle: true
     minify: true
     sourcemap: false
-
     external:
       - pug
 
@@ -69,6 +92,77 @@ resources:
       Properties:
         RetentionInDays: 7
       DeletionPolicy: Retain
+
+    # --- DynamoDB Semantic Cache Table ---
+    SemanticCacheTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-semantic-cache
+        BillingMode: PAY_PER_REQUEST
+        TableClass: STANDARD_INFREQUENT_ACCESS
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: false
+        SSESpecification:
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+        Tags:
+          - Key: Project
+            Value: ${self:service}
+          - Key: Stage
+            Value: ${self:provider.stage}
+
+    # --- DynamoDB Spoonacular API Cache Table ---
+    # Uses a deterministic cacheKey (sha256 of endpoint+sorted params) as the
+    # hash key, so lookups are O(1) GetItem — no scan required.
+    SpoonacularCacheTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-spoonacular-cache
+        BillingMode: PAY_PER_REQUEST
+        TableClass: STANDARD_INFREQUENT_ACCESS
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: false
+        SSESpecification:
+          SSEEnabled: true
+        AttributeDefinitions:
+          - AttributeName: cacheKey
+            AttributeType: S
+        KeySchema:
+          - AttributeName: cacheKey
+            KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: true
+        Tags:
+          - Key: Project
+            Value: ${self:service}
+          - Key: Stage
+            Value: ${self:provider.stage}
+
+  Outputs:
+    SemanticCacheTableName:
+      Description: DynamoDB table used for AI semantic cache
+      Value: !Ref SemanticCacheTable
+
+    SemanticCacheTableArn:
+      Description: ARN of the DynamoDB semantic cache table
+      Value: !GetAtt SemanticCacheTable.Arn
+
+    SpoonacularCacheTableName:
+      Description: DynamoDB table used for Spoonacular API response cache
+      Value: !Ref SpoonacularCacheTable
+
+    SpoonacularCacheTableArn:
+      Description: ARN of the DynamoDB Spoonacular cache table
+      Value: !GetAtt SpoonacularCacheTable.Arn
 
 package:
   individually: true

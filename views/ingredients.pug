@@ -28,62 +28,129 @@ html(lang="en")
         div(id="contentForFood")
     include components/footer
 script(src="./hamburgerMenu.js")
-script(src="./ai.js")
+script(src="./spoonacular.js")
 script.
-  const apiKey = !{JSON.stringify(apiKey || '')};
+  const questionIcons = [
+    './images/question-icons/diet.png',
+    './images/question-icons/ramen.png',
+    './images/question-icons/biryani.png',
+    './images/question-icons/dish.png',
+    './images/question-icons/christmas-dinner.png'
+  ];
+
+  function randomQuestionIcon() {
+    return questionIcons[Math.floor(Math.random() * questionIcons.length)];
+  }
+
   const ingredientsInput = document.querySelector('#ingredientsInput'),
-          contentForFood = document.querySelector('#contentForFood'),
-          searchBtn = document.querySelector('#submit'),
-          tooltipText = document.querySelector('.tooltiptext');
-        const url = 
-        searchBtn.addEventListener('click', fetchRecipes);
+        contentForFood = document.querySelector('#contentForFood'),
+        searchBtn = document.querySelector('#submit'),
+        tooltipText = document.querySelector('.tooltiptext');
 
-        async function fetchRecipes(){
-          const raw = encodeURIComponent(ingredientsInput.value.replace(/\s*,\s*/g, ', '));
-          console.log('Encoded ingredients input:', raw);
-          fetch(`https://api.spoonacular.com/recipes/findByIngredients?ingredients=${raw}&number=4&apiKey=${apiKey}`)
-          .then(response => response.json())
-          .then(data => {
-            console.log('Received data from Spoonacular API:', data);
-            if (data.length === 0) {
-              contentForFood.className = 'ai-output';
-              contentForFood.innerHTML = `
-                <div class="ai-output-header">No recipes found</div>
-                <p class="ai-output-tail">Try a different mix of ingredients or add a few pantry staples.</p>
-              `;
-              return;
+  searchBtn.addEventListener('click', fetchRecipes);
+
+  // Listener para abrir/cerrar la burbuja
+  contentForFood.addEventListener('click', function(e){
+    const btn = e.target.closest('.note-btn');
+    if(btn){
+      const card = btn.closest('.ai-recipe-card');
+      const bubble = card.querySelector('.speech-bubble');
+      bubble.classList.toggle('active');
+      
+      if (bubble.classList.contains('active')) {
+        const textarea = bubble.querySelector('textarea');
+        if (textarea) textarea.focus();
+      }
+    }
+  });
+
+  // Listener para capturar el Enter en la burbuja
+  contentForFood.addEventListener('keydown', async function(e){
+    if (e.target.matches('.speech-bubble textarea') && e.key === 'Enter') {
+      if (!e.shiftKey) {
+        e.preventDefault();
+        let question = e.srcElement.nextSibling.parentNode.parentElement.innerText + e.target.value;
+          try {
+              const response = await fetch('/ai-route', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ noteText: question })
+              });
+
+              // fetch no arroja error en estados 400 o 500, hay que validar response.ok
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+
+              const data = await response.json(); // En fetch nativo debes desempaquetar el JSON
+              console.log('Server response:', data);
+              e.target.value = ''; 
+              e.target.value = data.result.analysis
+
+            } catch (error) {
+              console.error('Error sending note to server:', error);
             }
+      }
+    }
+  });
 
-            contentForFood.className = 'ai-output';
-            contentForFood.innerHTML = '<div class="ai-output-header">Recipes you can make</div>';
+  async function fetchRecipes(){
+    const ingredients = ingredientsInput.value.replace(/\s*,\s*/g, ', ').trim();
+    console.log('Ingredients input:', ingredients);
 
-            const recipeList = document.createElement('div');
-            recipeList.className = 'ai-recipe-list';
+    try {
+      const data = await spoonacularFetch('/recipes/findByIngredients', {
+        ingredients,
+        number: 4,
+      });
 
-            data.forEach(recipe => {
-              const recipeDiv = document.createElement('div');
-              recipeDiv.classList.add('ai-recipe-card');
-              recipeDiv.innerHTML = `
-                <img class="ai-recipe-img" src="${recipe.image}" alt="${recipe.title}">
-                <div class="ai-recipe-text">
-                  <h3>${recipe.title}</h3>
-                  <p><strong>Used ingredients:</strong> ${recipe.usedIngredients && recipe.usedIngredients.length ? recipe.usedIngredients.map(ing => ing.name).join(', ') : 'None'}</p>
-                  <p><strong>Missed ingredients:</strong> ${recipe.missedIngredients && recipe.missedIngredients.length ? recipe.missedIngredients.map(ing => ing.name).join(', ') : 'None'}</p>
-                </div>
-              `;
-              recipeList.appendChild(recipeDiv);
-            });
+      console.log('Received data from Spoonacular API:', data);
+      if (data.length === 0) {
+        contentForFood.className = 'ai-output';
+        contentForFood.innerHTML = `
+          <div class="ai-output-header">No recipes found</div>
+          <p class="ai-output-tail">Try a different mix of ingredients or add a few pantry staples.</p>
+        `;
+        return;
+      }
 
-            contentForFood.appendChild(recipeList);
-          })
-          .catch(error => {
-            console.error('Error fetching recipes:', error);
-            contentForFood.className = 'ai-output';
-            contentForFood.innerHTML = `
-              <div class="ai-output-header">Something went wrong</div>
-              <p class="ai-output-tail">Error fetching recipes. Please try again later.</p>
-            `;
-          });
-        }
+      contentForFood.className = 'ai-output';
+      contentForFood.innerHTML = '<div class="ai-output-header">Recipes you can make</div>';
+
+      const recipeList = document.createElement('div');
+      recipeList.className = 'ai-recipe-list';
+
+      data.forEach(recipe => {
+        const recipeDiv = document.createElement('div');
+        recipeDiv.classList.add('ai-recipe-card');
+        recipeDiv.setAttribute('data-id', recipe.id);
+        
+        recipeDiv.innerHTML = `
+          <button type="button" class="note-btn" title="Add note"><img src="${randomQuestionIcon()}" alt="Add note" /></button>
+          <div class="speech-bubble">
+            <textarea placeholder="Write a note for this meal..."></textarea>
+          </div>
+          <img class="ai-recipe-img" src="${recipe.image}" alt="${recipe.title}">
+          <div class="ai-recipe-text">
+            <h3>${recipe.title}</h3>
+            <p><strong>Used ingredients:</strong> ${recipe.usedIngredients && recipe.usedIngredients.length ? recipe.usedIngredients.map(ing => ing.name).join(', ') : 'None'}</p>
+            <p><strong>Missed ingredients:</strong> ${recipe.missedIngredients && recipe.missedIngredients.length ? recipe.missedIngredients.map(ing => ing.name).join(', ') : 'None'}</p>
+          </div>
+        `;
+        recipeList.appendChild(recipeDiv);
+      });
+
+      contentForFood.appendChild(recipeList);
+    } catch(error) {
+      console.error('Error fetching recipes:', error);
+      contentForFood.className = 'ai-output';
+      contentForFood.innerHTML = `
+        <div class="ai-output-header">Something went wrong</div>
+        <p class="ai-output-tail">Error fetching recipes. Please try again later.</p>
+      `;
+    }
+  }
 
 

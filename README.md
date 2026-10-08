@@ -36,35 +36,29 @@ Foodmania showcases modern cloud engineering, secure DevOps automation, and scal
 
 #  Usage
 
-The application currently exposes six server-rendered routes, each backed by its own Pug view:
+The application exposes the following server-rendered routes, each backed by its own Pug view:
 
 | Route | View | Purpose |
 | :--- | :--- | :--- |
-| `GET /` | `index.pug` | Home page / recipe search, powered by the Spoonacular API |
+| `GET /` | `index.pug` | Home page / recipe search |
 | `GET /random` | `randomrecipe.pug` | Surfaces a random recipe suggestion |
 | `GET /menu` | `menu.pug` | Browsable recipe/menu grid |
 | `GET /planner` | `plan.pug` | Meal-planning view |
 | `GET /mealplan` | `mealplanner.pug` | Assembles selected recipes into a meal plan |
 | `GET /wine-pairs` | `wine-pairs.pug` | Wine-pairing suggestions for dishes |
+| `GET /ingredients` | `ingredients.pug` | Search recipes by ingredients |
+| `POST /ai-route` | — | Server-side DeepSeek AI analysis proxy |
+| `POST /spoonacular` | — | Server-side Spoonacular API proxy with DynamoDB cache |
 
-Every route receives the Spoonacular `apiKey` (loaded from the `API_KEY` environment variable) and renders it into the corresponding view for client-side calls to the Spoonacular API.
+The Spoonacular `apiKey` is never exposed to the browser. All Spoonacular calls are proxied through `POST /spoonacular`, which checks DynamoDB before calling the external API.
 
-Recent additions (ingredients view + AI formatting):
+Recent additions (ingredients view + AI analysis + caching):
 
-- New server-side DeepSeek proxy: `POST /deepseek` — configured by the `DEEPSEEK_API_KEY` and `DEEPSEEK_ENDPOINT` environment variables. When present the server securely forwards an instruction + Spoonacular payload to the DeepSeek endpoint and returns the model output to the client.
-- Client-side integration: `views/ingredients.pug` and `public/ai.js` implement a flow where the user types ingredients, the client calls Spoonacular's `findByIngredients` endpoint, then the reply is interpreted by DeepSeek (via the server proxy) or by a local formatter. The interpreted, human-friendly text is shown inline and each recipe now renders in its own styled card with image.
-- Styling: All UI styles for the AI output and recipe cards live in `public/styles.css` under the `.ai-*` classes.
-
-To enable DeepSeek (optional, recommended for richer human-friendly prose):
-
-1. Set the environment variables in your `.env` or in your hosting environment:
-
-```
-DEEPSEEK_API_KEY=sk_live_...   # your DeepSeek API key
-DEEPSEEK_ENDPOINT=https://api.deepseek.example/v1/interpret
-```
-
-2. Restart the server. When configured, the ingredients view will call `POST /deepseek` (server-side) rather than exposing any secret to the browser.
+- **Spoonacular server-side proxy:** `POST /spoonacular` accepts `{ endpoint, params }` from the browser, performs a DynamoDB `GetItem` lookup using a SHA-256 cache key built from the endpoint + sorted params, returns the cached response on hit, or fetches Spoonacular live, stores the result with a configurable TTL (default 1 hour), and returns the data. The `apiKey` never leaves the server.
+- **AI analysis proxy:** `POST /ai-route` forwards user prompts to DeepSeek via the OpenAI-compatible SDK, with a semantic similarity cache backed by `SemanticCacheTable` in DynamoDB — repeated or similar questions are answered from cache at zero LLM cost.
+- **Client-side proxy helper:** `public/spoonacular.js` exposes `spoonacularFetch(endpoint, params)`, used by all views in place of direct browser → Spoonacular calls.
+- **Ingredients view:** `views/ingredients.pug` lets users type ingredients, fetches matching recipes through `/spoonacular`, and sends the results to DeepSeek via `/ai-route` for human-friendly interpretation. Each recipe renders in its own styled card with image.
+- **Styling:** All UI styles for AI output and recipe cards live in `public/styles.css` under the `.ai-*` classes.
 
 
 ---
@@ -83,10 +77,19 @@ graph TD
         Handler -->|Routes Request| Express[Express App Instance]
         Express -->|Renders| Views[Pug Templates]
         Express -->|Serves| Static[Static Assets]
+        Express -->|"POST /spoonacular"| SpoonProxy[Spoonacular Proxy]
+        Express -->|"POST /ai-route"| AIProxy[AI Analysis Proxy]
     end
 
-    Views -->|"Inline Spoonacular API Key"| Client
-    Client -->|"Client-side REST calls"| Spoonacular[Spoonacular External API]
+    Views -->|Rendered HTML| Client
+    Client -->|"spoonacularFetch()"| Express
+
+    SpoonProxy -->|GetItem / PutItem| SpoonCache[(SpoonacularCacheTable DynamoDB)]
+    SpoonProxy -->|Cache miss — live fetch| Spoonacular[Spoonacular External API]
+
+    AIProxy -->|Scan + cosine similarity| SemanticCache[(SemanticCacheTable DynamoDB)]
+    AIProxy -->|Cache miss — LLM call| DeepSeek[DeepSeek API]
+
     Handler -->|"Records request count + latency"| OTEL[OpenTelemetry Metrics SDK]
     OTEL -->|"OTLP/HTTP export"| Backend[Prometheus-compatible OTLP Backend]
 ```
@@ -94,10 +97,13 @@ graph TD
 ```
 food/
 ├── public/                 # Static assets (CSS, client-side JS, images)
-├── views/                  # Pug templates (index, menu, plan, mealplanner, randomrecipe, wine-pairs)
+│   └── spoonacular.js      # Client-side proxy helper (replaces direct Spoonacular calls)
+├── views/                  # Pug templates (index, menu, plan, mealplanner, randomrecipe, wine-pairs, ingredients)
 ├── cypress/                # Cypress end-to-end test specs
 ├── app.js                  # Express app definition and route table
 ├── handler.js              # AWS Lambda adapter (@vendia/serverless-express) + OpenTelemetry metrics
+├── ai_feature.js           # DeepSeek AI orchestrator with DynamoDB semantic cache
+├── spoonacular-cache.js    # Spoonacular proxy handler with DynamoDB response cache
 ├── package.json             # Dependencies and npm scripts
 ├── .github/workflows/       # CI (build + Cypress) and CD (OIDC deploy) pipeline
 └── infra/                   # Infrastructure as Code
@@ -132,11 +138,12 @@ food/
 | **Frontend** | HTML5, CSS3, JS (ES6+) | Static assets served alongside the rendered pages. |
 | **Template Engine** | Pug | Server-side view rendering. |
 | **Application Runtime** | Node.js 20.x / Express.js | HTTP routing and rendering, defined in `app.js`. |
-| **Data Layer** | Mongoose | Listed as a project dependency for MongoDB modeling; not currently wired into any route in `app.js`. |
+| **Caching & Data Layer** | Amazon DynamoDB | Two PAY_PER_REQUEST tables: `SpoonacularCacheTable` caches API responses keyed by SHA-256 (O(1) GetItem); `SemanticCacheTable` stores AI prompt embeddings for cosine-similarity cache lookups. Both use DynamoDB TTL for automatic expiry. |
 | **Cloud Computing** | AWS Lambda | Runs the Express app via `@vendia/serverless-express`, with `app.listen()` commented out in favor of the Lambda handler. |
 | **API Proxy** | Amazon API Gateway (HTTP API) | Routes all paths (`/`, `{proxy+}`) to the Lambda function. |
 | **Telemetry** | OpenTelemetry Metrics SDK | `handler.js` records an HTTP request counter and a response-duration histogram per invocation, exported over OTLP/HTTP and force-flushed before the Lambda response returns. |
 | **External API** | Spoonacular | Supplies recipe, ingredient, and pairing data to the views. |
+| **AI** | DeepSeek (via OpenAI SDK) | Powers the culinary assistant; responses are semantically cached in DynamoDB to eliminate redundant LLM calls. |
 | **CI/CD / IaC** | Serverless Framework & GitHub Actions | Declarative infrastructure paired with an OIDC-authenticated GitHub Actions pipeline. |
 | **Testing** | Cypress | End-to-end specs (`cypress/e2e`) run in CI against the deployed API Gateway URL. |
 

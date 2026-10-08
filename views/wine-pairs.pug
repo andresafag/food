@@ -236,14 +236,55 @@ html(lang="en")
         p.planMessage Find the perfect wine for your dish.
     include components/footer
     script(src="./hamburgerMenu.js")
+    script(src="./spoonacular.js")
     script.
-      const apiKey = !{JSON.stringify(apiKey || '')};
+      const questionIcons = [
+        './images/question-icons/diet.png',
+        './images/question-icons/ramen.png',
+        './images/question-icons/biryani.png',
+        './images/question-icons/dish.png',
+        './images/question-icons/christmas-dinner.png'
+      ];
+
+      function randomQuestionIcon() {
+        return questionIcons[Math.floor(Math.random() * questionIcons.length)];
+      }
+
       const wineForm = document.querySelector('#wine-form');
       const foodInput = document.querySelector('#food');
       const priceInput = document.querySelector('#maxPrice');
       const searchWine = document.querySelector('#submit');
       const contentForWine = document.querySelector('#contentForWine');
       const tooltipText = document.querySelector('.tooltiptext');
+
+      // Listener para abrir/cerrar la burbuja y elevar la tarjeta activa
+      contentForWine.addEventListener('click', function(e){
+        const btn = e.target.closest('.note-btn');
+        if(btn){
+          const card = btn.closest('.mainfoodcontainer');
+          const bubble = card.querySelector('.speech-bubble');
+          
+          bubble.classList.toggle('active');
+
+          if (bubble.classList.contains('active')) {
+            card.style.zIndex = '50';
+            const textarea = bubble.querySelector('textarea');
+            if (textarea) textarea.focus();
+          } else {
+            card.style.zIndex = '1';
+          }
+        }
+      });
+
+      // Listener para capturar el Enter en la burbuja
+      contentForWine.addEventListener('keydown', function(e){
+        if (e.target.matches('.speech-bubble textarea') && e.key === 'Enter') {
+          if (!e.shiftKey) {
+            e.preventDefault();
+            console.log("hola");
+          }
+        }
+      });
 
       function showError(message) {
         tooltipText.innerHTML = message;
@@ -275,6 +316,10 @@ html(lang="en")
 
         return `
           <div class="mainfoodcontainer">
+            <button type="button" class="note-btn" title="Add note"><img src="${randomQuestionIcon()}" alt="Add note" /></button>
+            <div class="speech-bubble">
+              <textarea placeholder="Write a note for this meal..."></textarea>
+            </div>
             <div class="foodContentboxTittle">
               <div class="title">Wine Pairing Result</div>
             </div>
@@ -298,10 +343,10 @@ html(lang="en")
         contentForWine.innerHTML = '<p class="planMessage">Searching for wine pairings…</p>';
 
         try {
-          const q         = encodeURIComponent(foodInput.value.trim());
-          const maxPrice  = priceInput.value ? `&maxPrice=${encodeURIComponent(priceInput.value)}` : '';
-          const res       = await fetch(`https://api.spoonacular.com/food/wine/pairing?food=${q}${maxPrice}&apiKey=${apiKey}`);
-          const json      = await res.json();
+          const params = { food: foodInput.value.trim() };
+          if (priceInput.value) params.maxPrice = priceInput.value;
+
+          const json = await spoonacularFetch('/food/wine/pairing', params);
 
           if (json.status === 'failure') {
             showError(json.message || 'No pairing found for that food.');

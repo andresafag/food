@@ -30,8 +30,20 @@ html(lang="en")
           img(alt="welcomeimg", id="imge")
     include components/footer
 script(src="./hamburgerMenu.js")
+script(src="./spoonacular.js")
 script.
-  const apiKey = !{JSON.stringify(apiKey || '')};
+  const questionIcons = [
+    './images/question-icons/diet.png',
+    './images/question-icons/ramen.png',
+    './images/question-icons/biryani.png',
+    './images/question-icons/dish.png',
+    './images/question-icons/christmas-dinner.png'
+  ];
+
+  function randomQuestionIcon() {
+    return questionIcons[Math.floor(Math.random() * questionIcons.length)];
+  }
+
   var pic_rand = ["./images/merengue.jpg", "./images/pasta.jpg", "./images/smoothie.jpg"];
 
   function randomp(){
@@ -43,8 +55,36 @@ script.
 
   const contentForFood = document.querySelector('#contentForFood'),
         searchFood = document.querySelector('#submit'),
-        tooltipText = document.querySelector('.tooltiptext'),
-        randomRecipeEndpoint = `https://api.spoonacular.com/recipes/random?number=1&apiKey=${apiKey}`;
+        tooltipText = document.querySelector('.tooltiptext');
+
+  // Listener para abrir/cerrar la burbuja y ajustar z-index
+  contentForFood.addEventListener('click', function(e){
+    const btn = e.target.closest('.note-btn');
+    if(btn){
+      const card = btn.closest('.meal-item-card');
+      const bubble = card.querySelector('.speech-bubble');
+      
+      bubble.classList.toggle('active');
+
+      if (bubble.classList.contains('active')) {
+        card.style.zIndex = '50';
+        const textarea = bubble.querySelector('textarea');
+        if (textarea) textarea.focus();
+      } else {
+        card.style.zIndex = '1';
+      }
+    }
+  });
+
+  // Listener para capturar el Enter en la burbuja
+  contentForFood.addEventListener('keydown', function(e){
+    if (e.target.matches('.speech-bubble textarea') && e.key === 'Enter') {
+      if (!e.shiftKey) {
+        e.preventDefault();
+        console.log("hola");
+      }
+    }
+  });
 
   function nutrientFrom(respon, key){
     if(!respon || !respon.nutrition || !respon.nutrition.nutrients) return 0;
@@ -58,6 +98,7 @@ script.
     const protein = nutrientFrom(respon, 'protein');
     const fat = nutrientFrom(respon, 'fat');
     const carbs = nutrientFrom(respon, 'carbohydrates') || nutrientFrom(respon, 'carbs');
+    
     const nutrientBar = (calories || protein || fat || carbs) ? `
       <div class="week-nutrients">
         <span><b>Calories:</b> ${calories} kcal</span>
@@ -92,35 +133,42 @@ script.
 
     const summaryHtml = respon.summary ? `<div class="credits">${respon.summary}</div>` : '';
 
+    // Todo queda contenido dentro de .meal-item-card para mantener la posición y evitar recortes
     return `
-      ${nutrientBar}
-      <div class="meal-item-card">
-        ${imgTag}
-        <div>
-          <h2>${respon.title || ''}</h2>
-          <div class="meta">
-            <span>Ready in: ${respon.readyInMinutes || 'N/A'} min</span>
-            <span>Servings: ${respon.servings || 'N/A'}</span>
-            <span>Likes: ${likes}</span>
-            <span>Cheap: ${cheap}</span>
+      <div class="meal-item-card" data-id="${respon.id}">
+        <button type="button" class="note-btn" title="Add note"><img src="${randomQuestionIcon()}" alt="Add note" /></button>
+        <div class="speech-bubble">
+          <textarea placeholder="Write a note for this meal..."></textarea>
+        </div>
+        ${nutrientBar}
+        <div class="card-body">
+          ${imgTag}
+          <div>
+            <h2>${respon.title || ''}</h2>
+            <div class="meta">
+              <span>Ready in: ${respon.readyInMinutes || 'N/A'} min</span>
+              <span>Servings: ${respon.servings || 'N/A'}</span>
+              <span>Likes: ${likes}</span>
+              <span>Cheap: ${cheap}</span>
+            </div>
+            ${tagsHtml}
+            <div class="credits">Source: ${credits}</div>
+            ${ingredients ? `<h4>Ingredients</h4><ul class="ingredients-list">${ingredients}</ul>` : ''}
+            ${instructionsHtml ? `<h4>Instructions</h4><div class="instruction-steps">${instructionsHtml}</div>` : ''}
+            ${summaryHtml}
           </div>
-          ${tagsHtml}
-          <div class="credits">Source: ${credits}</div>
-          ${ingredients ? `<h4>Ingredients</h4><ul class="ingredients-list">${ingredients}</ul>` : ''}
-          ${instructionsHtml ? `<h4>Instructions</h4><div class="instruction-steps">${instructionsHtml}</div>` : ''}
-          ${summaryHtml}
         </div>
       </div>
     `;
   }
 
-  /* on click the request starts searching for a random recipe */
+  /* al hacer clic inicia la búsqueda de una receta aleatoria */
   searchFood.addEventListener('click', function(e){
     e.preventDefault();
     contentForFood.innerHTML = '<p class="planMessage">Searching…</p>';
 
-    fetch(randomRecipeEndpoint)
-      .then(response => response.json())
+    // Random recipes bypass the cache (ttl=0) so each click is genuinely random
+    spoonacularFetch('/recipes/random', { number: 1 }, 0)
       .then(response => {
         if(!response.recipes || response.recipes.length === 0){
           tooltipText.innerHTML = 'Could not fetch random recipe';

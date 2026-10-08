@@ -102,7 +102,7 @@ jobs:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
         run: |
           cd infra
-          npx dotenv -e ../.env -- serverless deploy
+          npx dotenv run -f ../.env -- serverless deploy
     
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT# 2. Consultar directamente CloudFormation buscando 'HttpApiUrl'
           API_URL=$(aws cloudformation describe-stacks \

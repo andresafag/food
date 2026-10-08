@@ -31,8 +31,20 @@ html(lang="en")
           img(alt="welcomimg", id="imge")
     include components/footer
 script(src="./hamburgerMenu.js")
+script(src="./spoonacular.js")
 script.
-  const apiKey = !{JSON.stringify(apiKey || '')};
+  const questionIcons = [
+    './images/question-icons/diet.png',
+    './images/question-icons/ramen.png',
+    './images/question-icons/biryani.png',
+    './images/question-icons/dish.png',
+    './images/question-icons/christmas-dinner.png'
+  ];
+
+  function randomQuestionIcon() {
+    return questionIcons[Math.floor(Math.random() * questionIcons.length)];
+  }
+
   window.onload = randomp;
   var pic_rand = ["./images/merengue.jpg", "./images/pasta.jpg", "./images/smoothie.jpg"];
   function randomp(){
@@ -61,10 +73,8 @@ script.
       const nutrientBar = (calories||protein||fat||carbs) ? `\n        <div class="week-nutrients">\n          <span><b>Calories:</b> ${calories} kcal</span>\n          <span><b>Protein:</b> ${protein}g</span>\n          <span><b>Fat:</b> ${fat}g</span>\n          <span><b>Carbs:</b> ${carbs}g</span>\n        </div>\n      ` : '';
 
       const imgTag = imgSrc ? `<img src="${imgSrc}" alt="${respon.title}" />` : '';
-
       const likes = respon.aggregateLikes || 0;
       const cheap = respon.cheap ? 'Yes' : 'No';
-      const cookingMinutes = respon.cookingMinutes || respon.preparationMinutes || '';
       const credits = respon.creditsText || respon.sourceName || '';
 
       const diets = Array.isArray(respon.diets) ? respon.diets : [];
@@ -87,20 +97,20 @@ script.
           return `<li>${emoji} ${s.step}</li>`;
         }).join('')).join('') + '</ul>';
       } else if(respon.instructions){
-        // If only plain instructions string is available, strip numeric prefixes like "1. " and show as paragraphs
         const stripped = respon.instructions.replace(/\d+\.\s*/g, '');
         instructionsHtml = `<div>${stripped}</div>`;
       }
 
       const summaryHtml = respon.summary ? `<div class="credits">${respon.summary}</div>` : '';
 
-      return `\n        ${nutrientBar}\n        <div class="meal-item-card">\n          ${imgTag}\n          <div>\n            <h2>${respon.title || ''}</h2>\n            <div class="meta">\n              <span>Ready in: ${respon.readyInMinutes || 'N/A'} min</span>\n              <span>Servings: ${respon.servings || 'N/A'}</span>\n              <span>Likes: ${likes}</span>\n              <span>Cheap: ${cheap}</span>\n            </div>\n            ${tagsHtml}\n            <div class="credits">Source: ${credits}</div>\n            ${ingredients ? `<h4>Ingredients</h4><ul class="ingredients-list">${ingredients}</ul>` : ''}\n            ${instructionsHtml ? `<h4>Instructions</h4><div class="instruction-steps">${instructionsHtml}</div>` : ''}\n            ${summaryHtml}\n          </div>\n        </div>\n      `;
+      // Retornamos la tarjeta con el botón flotante y el campo burbuja
+      return `\n        ${nutrientBar}\n        <div class="meal-item-card" data-id="${respon.id}">\n          <button type="button" class="note-btn" title="Add note"><img src="${randomQuestionIcon()}" alt="Add note" /></button>\n          <div class="speech-bubble">\n            <textarea placeholder="Write a note for this meal..."></textarea>\n          </div>\n          ${imgTag}\n          <div>\n            <h2>${respon.title || ''}</h2>\n            <div class="meta">\n              <span>Ready in: ${respon.readyInMinutes || 'N/A'} min</span>\n              <span>Servings: ${respon.servings || 'N/A'}</span>\n              <span>Likes: ${likes}</span>\n              <span>Cheap: ${cheap}</span>\n            </div>\n            ${tagsHtml}\n            <div class="credits">Source: ${credits}</div>\n            ${ingredients ? `<h4>Ingredients</h4><ul class="ingredients-list">${ingredients}</ul>` : ''}\n            ${instructionsHtml ? `<h4>Instructions</h4><div class="instruction-steps">${instructionsHtml}</div>` : ''}\n            ${summaryHtml}\n          </div>\n        </div>\n      `;
     }
 
     async function searchHandler(e){
       e.preventDefault();
       if(!foodInput.value || !foodInput.value.trim()){
-        tooltipText.innerHTML = "You didnt enter anything";
+        tooltipText.innerHTML = "You didn't enter anything";
         tooltipText.style.visibility = 'visible';
         setTimeout(()=> tooltipText.style.visibility = 'hidden', 3000);
         return;
@@ -109,10 +119,11 @@ script.
       contentForFood.innerHTML = '<p class="planMessage">Searching…</p>';
 
       try{
-        const q = encodeURIComponent(foodInput.value.trim());
-        const searchRes = await fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${q}&number=10&apiKey=${apiKey}`);
-        const searchJson = await searchRes.json();
-        console.log('searchJson', searchJson);
+        const searchJson = await spoonacularFetch('/recipes/complexSearch', {
+          query: foodInput.value.trim(),
+          number: 10,
+        });
+
         if(!searchJson.results || searchJson.results.length === 0){
           tooltipText.innerHTML = "No such food information in the database";
           tooltipText.style.visibility = 'visible';
@@ -121,15 +132,68 @@ script.
           return;
         }
 
-        const ids = searchJson.results.map(r => r.id);
-        const details = await Promise.all(ids.map(id => fetch(`https://api.spoonacular.com/recipes/${id}/information?apiKey=${apiKey}`).then(r=>r.json())));
-        console.log('details', details);
+        const details = await Promise.all(
+          searchJson.results.map(r => spoonacularFetch(`/recipes/${r.id}/information`))
+        );
+
         contentForFood.innerHTML = details.map(d => mealCardHTML(d)).join('');
       }catch(err){
         tooltipText.innerHTML = "Error: " + err.message;
         tooltipText.style.visibility = 'visible';
       }
     }
+
+
+    contentForFood.addEventListener('click', function(e){
+      const btn = e.target.closest('.note-btn');
+      if(btn){
+        const card = btn.closest('.meal-item-card');
+        const bubble = card.querySelector('.speech-bubble');
+        bubble.classList.toggle('active');
+
+        // Opcional: poner el foco automático en el textarea al abrir la burbuja
+        if (bubble.classList.contains('active')) {
+          const textarea = bubble.querySelector('textarea');
+          if (textarea) textarea.focus();
+        }
+      }
+    });
+
+    // Listener para detectar cuando presionan Enter en la burbuja
+    contentForFood.addEventListener('keydown', async function(e){
+      // Verificamos que el evento provenga de un textarea dentro de la burbuja y que la tecla sea Enter
+      if (e.target.matches('.speech-bubble textarea') && e.key === 'Enter') {
+        // Si NO se está presionando Shift + Enter (Shift+Enter suele usarse para salto de línea)
+        if (!e.shiftKey) {
+          e.preventDefault(); // Evita que se cree una nueva línea en el textarea
+          console.log(e.srcElement.nextSibling.parentNode.parentElement.innerText);
+          let question = e.srcElement.nextSibling.parentNode.parentElement.innerText + e.target.value;
+          try {
+              const response = await fetch('/ai-route', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ noteText: question })
+              });
+
+              // fetch no arroja error en estados 400 o 500, hay que validar response.ok
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+
+              const data = await response.json(); // En fetch nativo debes desempaquetar el JSON
+              console.log('Server response:', data);
+              e.target.value = ''; 
+              e.target.value = data.result.analysis
+
+            } catch (error) {
+              console.error('Error sending note to server:', error);
+            }
+
+        }
+      }
+    });
 
     searchFood.addEventListener('click', searchHandler);
   })();
