@@ -95,6 +95,7 @@ jobs:
         run: |
           echo "API_KEY=${{ secrets.API_KEY }}" > .env
           echo "OTEL_EXPORTER_IP=${{ secrets.OTEL_EXPORTER_IP}}" >> .env
+          echo "DEEP_SEEK_API_KEY=${{ secrets.DEEP_SEEK_API_KEY }}" >> .env
 
       - name: Deploy to AWS Cloud
         id: deploy
